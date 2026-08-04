@@ -517,331 +517,6 @@ body.dark .post-tag { background: #2a2a40; color: #d1d5db; border-color: #3a3a55
 body.dark .post-tag:hover { background: #3a3a55; color: #f3f4f6; }
 body.dark #searchResultsInner .bubble { background: #1e1e30 !important; }
 
-/* ================================================================
-   CREATORS GLASS PANEL — replace the "CREATORS SECTION IN SIDEBAR"
-   block in style.css (search for "===== CREATORS SECTION")
-   ================================================================ */
-
-/* The header inside the sidebar becomes a trigger */
-.creators-hdr {
-  padding: 12px 15px 10px;
-  font-size: 10px;
-  font-weight: 800;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  border-top: 1px solid #f0f0f0;
-  margin-top: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: color 0.2s, background 0.2s;
-  user-select: none;
-}
-.creators-hdr:hover { color: #374151; background: rgba(0,0,0,0.02); }
-.creators-hdr .ch-arrow {
-  font-size: 9px;
-  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
-  opacity: 0.5;
-}
-.creators-hdr.open .ch-arrow { transform: rotate(90deg); opacity: 1; }
-.creators-hdr .ch-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: #a5b4fc;
-  box-shadow: 0 0 6px #818cf8;
-  display: none;
-}
-.creators-hdr.open .ch-dot { display: block; }
-
-body.dark .creators-hdr { border-color: #2a2a40; color: #4b5563; }
-body.dark .creators-hdr:hover { color: #9ca3af; background: rgba(255,255,255,0.03); }
-
-/* Hide the old list inside the sidebar */
-#creatorsList { display: none; }
-
-/* ===== SEARCH FIX ===== */
-#searchResults { background: #fff; }
-body.dark #searchResults { background: #0f0f15; }
-
-/* מניעת הימתחות הערוצים כדי שהכפתור יעלה למעלה */
-#channelsList {
-    flex: 0 0 auto !important; 
-    margin-bottom: 10px !important;
-}
-
-/* כפתור יוצרים - מותאם לעברית ולצבעי האתר */
-.creators-hdr {
-    direction: rtl !important;
-    padding: 12px 16px !important;
-    margin: 10px 14px 15px !important;
-    background: #f8fafc !important; 
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 8px !important;
-    color: #334155 !important;
-    font-weight: bold !important;
-    font-size: 14px !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-}
-
-.creators-hdr:hover {
-    background: #eff6ff !important; 
-    color: #1a56db !important; 
-    border-color: #bfdbfe !important;
-}
-
-.ch-dot {
-    display: inline-block !important;
-    width: 8px !important;
-    height: 8px !important;
-    background: #3b82f6 !important; 
-    border-radius: 50% !important;
-    box-shadow: 0 0 6px rgba(59, 130, 246, 0.5) !important;
-    animation: pulse-dot 2s infinite !important;
-    margin-right: 8px !important;
-}
-
-@keyframes pulse-dot {
-    0% { opacity: 0.5; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1.2); }
-    100% { opacity: 0.5; transform: scale(0.8); }
-}
-
-.ch-arrow {
-    font-size: 12px !important;
-    opacity: 0.6 !important;
-    transition: transform 0.2s !important;
-}
-
-.creators-hdr:hover .ch-arrow {
-    transform: translateX(-4px) !important;
-    opacity: 1 !important;
-}
-
-/* ── Floating Glass Panel - סידור מיקום מושלם לימין ── */
-#creatorsPanel {
-    position: fixed !important;
-    right: 280px !important; /* מרחק מהתפריט הימני */
-    left: auto !important; /* ביטול הדחיפה שמאלה */
-    top: 20vh !important;
-    width: 256px;
-    z-index: 99999 !important;
-    transform: translateX(15px) scale(0.96) !important;
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.22s ease;
-    transform-origin: right top; /* האנימציה תפתח מימין */
-}
-#creatorsPanel.open {
-    transform: translateX(0) scale(1) !important;
-    opacity: 1;
-    pointer-events: all;
-}
-
-.cp-glass {
-    background: rgba(8, 8, 18, 0.86);
-    backdrop-filter: blur(28px) saturate(160%);
-    -webkit-backdrop-filter: blur(28px) saturate(160%);
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.09);
-    box-shadow: 0 40px 90px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.05) inset, 0 1px 0 rgba(255,255,255,0.1) inset;
-    overflow: hidden;
-}
-
-/* Subtle top glow line */
-.cp-glass::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 20%; right: 20%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(165,180,252,0.6), transparent);
-}
-
-.cp-glass-hdr {
-    padding: 14px 16px 11px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.cp-glass-title {
-    font-size: 10px;
-    font-weight: 800;
-    color: rgba(255,255,255,0.4);
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-}
-.cp-glass-title::before {
-    content: '';
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #a5b4fc, #818cf8);
-    box-shadow: 0 0 6px rgba(165,180,252,0.8);
-    display: block;
-    flex-shrink: 0;
-}
-.cp-glass-close {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.07);
-    border: none;
-    color: rgba(255,255,255,0.35);
-    font-size: 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, color 0.15s;
-    font-family: 'Heebo', sans-serif;
-    line-height: 1;
-}
-.cp-glass-close:hover {
-    background: rgba(255,255,255,0.14);
-    color: rgba(255,255,255,0.75);
-}
-
-.cp-glass-list {
-    max-height: 300px; 
-    overflow-y: auto;
-    padding: 8px 10px 10px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.12) transparent;
-}
-.cp-glass-list::-webkit-scrollbar { width: 3px; }
-.cp-glass-list::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.12);
-    border-radius: 99px;
-}
-
-/* ── Creator Item ── */
-.cg-item {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 8px 10px;
-    border-radius: 13px;
-    cursor: pointer;
-    position: relative;
-    margin-bottom: 2px;
-    transition: background 0.18s;
-    direction: rtl;
-}
-.cg-item:hover { background: rgba(255,255,255,0.06); }
-.cg-item.active { background: rgba(165,180,252,0.1); }
-
-/* Left accent bar when active */
-.cg-item.active::after {
-    content: '';
-    position: absolute;
-    right: 0; top: 20%; bottom: 20%;
-    width: 2.5px;
-    background: linear-gradient(to bottom, #a5b4fc, #818cf8);
-    border-radius: 99px;
-}
-
-/* ── Avatar ── */
-.cg-av-wrap {
-    position: relative;
-    flex-shrink: 0;
-    width: 38px; height: 38px;
-}
-.cg-av-ring {
-    position: absolute;
-    inset: -2.5px;
-    border-radius: 50%;
-    background: conic-gradient( rgba(165,180,252,0) 0deg, rgba(129,140,248,0.8) 120deg, rgba(99,102,241,0.5) 240deg, rgba(165,180,252,0) 360deg );
-    opacity: 0;
-    transition: opacity 0.25s;
-    animation: none;
-}
-.cg-item:hover .cg-av-ring { opacity: 0.6; }
-.cg-item.active .cg-av-ring {
-    opacity: 1;
-    animation: ringRotate 3s linear infinite;
-}
-@keyframes ringRotate {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-}
-
-.cg-av-inner {
-    position: absolute;
-    inset: 2px;
-    border-radius: 50%;
-    background: #0f0f1a;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 800;
-    color: #fff;
-}
-.cg-av-inner img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-/* ── Text Info ── */
-.cg-info { flex: 1; min-width: 0; }
-.cg-name {
-    font-size: 13px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.75);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.3;
-    transition: color 0.15s;
-    font-family: 'Heebo', sans-serif;
-}
-.cg-item:hover .cg-name { color: rgba(255,255,255,0.95); }
-.cg-item.active .cg-name { color: #c7d2fe; }
-
-.cg-role {
-    font-size: 10px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.28);
-    font-family: 'Heebo', sans-serif;
-    transition: color 0.15s;
-}
-.cg-item.active .cg-role { color: rgba(165,180,252,0.55); }
-
-/* Scroll hint gradient at bottom */
-.cp-glass-list-wrap { position: relative; }
-.cp-glass-list-fade {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 36px;
-    background: linear-gradient(to top, rgba(8,8,18,0.85), transparent);
-    pointer-events: none;
-    border-radius: 0 0 20px 20px;
-    transition: opacity 0.2s;
-}
-
-/* התאמה למובייל - ממורכז יפה באמצע המסך */
-@media(max-width: 900px) {
-    #creatorsPanel {
-        right: 50% !important;
-        left: auto !important;
-        transform: translateX(50%) scale(0.96) !important;
-        top: 20vh !important;
-        width: calc(100vw - 24px) !important;
-        max-width: 280px !important;
-    }
-    #creatorsPanel.open {
-        transform: translateX(50%) scale(1) !important;
-    }
-}
 /* עיצוב כפתור הסטטיסטיקות */
 .stats-hdr {
     direction: rtl !important;
@@ -925,80 +600,94 @@ body, html { background: #fff !important; }
     margin-left: auto; /* דוחף הכל שמאלה ומשאיר מקום לפרסומות בעתיד */
 }
 
-/* ================= פאנל ניהול (מודרני) ================= */
+/* ================= פאנל ניהול (עדין ובהיר) ================= */
 #adminPanelModal{
   display:none; position:fixed; inset:0; z-index:850;
-  background:rgba(10,12,25,.65); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  background:rgba(30,32,44,.42); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
   align-items:center; justify-content:center; padding:20px;
-  animation:apFadeIn .25s ease-out;
+  animation:apFadeIn .2s ease-out;
 }
 #adminPanelModal.open{display:flex;}
 @keyframes apFadeIn{from{opacity:0}to{opacity:1}}
 .ap-box{
-  width:100%; max-width:720px; max-height:88vh; display:flex; flex-direction:column;
-  background:#12121d; border-radius:24px; overflow:hidden;
-  box-shadow:0 30px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06);
-  animation:apPop .3s cubic-bezier(.16,1,.3,1) both;
+  width:100%; max-width:840px; height:min(88vh,640px); display:flex; flex-direction:row;
+  background:#ffffff; border-radius:22px; overflow:hidden;
+  box-shadow:0 30px 70px rgba(30,35,60,.22), 0 0 0 1px rgba(20,20,30,.04);
+  animation:apPop .28s cubic-bezier(.16,1,.3,1) both;
   font-family:'Heebo',sans-serif; direction:rtl;
 }
-@keyframes apPop{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-.ap-hdr{
-  position:relative; padding:26px 26px 22px; flex-shrink:0; overflow:hidden;
-  background:linear-gradient(135deg,#1a56db 0%,#6d28d9 55%,#db2777 100%);
-}
-.ap-hdr::before{
-  content:''; position:absolute; inset:0; opacity:.5;
-  background:radial-gradient(circle at 20% 20%, rgba(255,255,255,.25), transparent 45%),
-             radial-gradient(circle at 85% 80%, rgba(255,255,255,.18), transparent 40%);
-}
-.ap-hdr-top{position:relative; display:flex; align-items:center; justify-content:space-between; gap:10px;}
-.ap-hdr-user{display:flex; align-items:center; gap:12px; min-width:0;}
-.ap-hdr-user img, .ap-hdr-avatar-fallback{
-  width:48px; height:48px; border-radius:14px; object-fit:cover; flex-shrink:0;
-  border:2px solid rgba(255,255,255,.5); box-shadow:0 4px 14px rgba(0,0,0,.25);
-}
-.ap-hdr-avatar-fallback{background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:18px;}
-.ap-hdr-name{font-size:17px; font-weight:900; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 4px rgba(0,0,0,.15);}
-.ap-hdr-role{
-  display:inline-flex; align-items:center; gap:5px; margin-top:4px; font-size:11px; font-weight:800;
-  color:#fff; background:rgba(255,255,255,.2); padding:3px 9px; border-radius:20px; backdrop-filter:blur(4px);
-}
-.ap-hdr-close{
-  background:rgba(255,255,255,.16); border:none; color:#fff; width:34px; height:34px; border-radius:11px;
-  cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  transition:background .15s, transform .15s;
-}
-.ap-hdr-close:hover{background:rgba(255,255,255,.3); transform:rotate(90deg);}
-.ap-hdr-title{position:relative; margin-top:18px; font-size:21px; font-weight:900; color:#fff; display:flex; align-items:center; gap:9px;}
-.ap-hdr-sub{position:relative; margin-top:4px; font-size:12.5px; color:rgba(255,255,255,.85); font-weight:600;}
+@keyframes apPop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-.ap-body{flex:1; overflow-y:auto; padding:22px 22px 26px; background:#12121d;}
-.ap-section-lbl{font-size:11px; font-weight:800; color:#6b7280; text-transform:uppercase; letter-spacing:.6px; margin:0 2px 12px; display:flex; align-items:center; gap:8px;}
-.ap-section-lbl::after{content:''; flex:1; height:1px; background:linear-gradient(90deg, rgba(255,255,255,.12), transparent);}
-.ap-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px;}
-@media(max-width:520px){.ap-grid{grid-template-columns:1fr;}}
-.ap-card{
-  position:relative; overflow:hidden; text-align:right; cursor:pointer;
-  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px;
-  padding:16px; display:flex; align-items:flex-start; gap:13px;
-  transition:transform .18s cubic-bezier(.16,1,.3,1), background .18s, border-color .18s, box-shadow .18s;
-  font-family:'Heebo',sans-serif;
+/* --- סרגל צד (קטגוריות) --- */
+.ap-sidebar{
+  width:230px; min-width:230px; height:100%; flex-shrink:0;
+  background:#f8f9fc; border-left:1px solid #eef0f5;
+  display:flex; flex-direction:column;
 }
-.ap-card:hover{
-  transform:translateY(-3px); background:rgba(255,255,255,.075); border-color:rgba(255,255,255,.18);
-  box-shadow:0 12px 28px rgba(0,0,0,.3);
+.ap-sidebar-user{
+  padding:20px 18px 16px; display:flex; align-items:center; gap:11px; border-bottom:1px solid #eef0f5; flex-shrink:0;
 }
-.ap-card:active{transform:translateY(-1px) scale(.99);}
-.ap-card-icon{
-  width:42px; height:42px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
-  font-size:16px; color:#fff; box-shadow:0 6px 16px -4px rgba(0,0,0,.5);
+.ap-sidebar-user img, .ap-sidebar-avatar-fallback{
+  width:40px; height:40px; border-radius:12px; object-fit:cover; flex-shrink:0;
+  box-shadow:0 2px 8px rgba(30,35,60,.1);
 }
-.ap-card-txt{min-width:0; flex:1;}
-.ap-card-title{font-size:14px; font-weight:800; color:#f3f4f6; margin-bottom:3px;}
-.ap-card-desc{font-size:11.5px; color:#9296a8; font-weight:500; line-height:1.5;}
-.ap-card-arrow{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#4b5060; font-size:12px; transition:transform .18s, color .18s;}
-.ap-card:hover .ap-card-arrow{transform:translateY(-50%) translateX(-3px); color:#9296a8;}
-body.dark #adminPanelModal.open{background:rgba(0,0,0,.75);}
+.ap-sidebar-avatar-fallback{background:#4f5fd6; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:15px;}
+.ap-sidebar-name{font-size:13.5px; font-weight:800; color:#1f2430; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.ap-sidebar-role{font-size:11px; font-weight:700; color:#8a90a6; margin-top:2px;}
+.ap-nav{flex:1; overflow-y:auto; padding:12px 10px;}
+.ap-nav-item{
+  width:100%; display:flex; align-items:center; gap:11px; padding:10px 11px; margin-bottom:3px;
+  background:none; border:none; border-radius:12px; cursor:pointer; text-align:right;
+  font-family:'Heebo',sans-serif; font-size:13px; font-weight:700; color:#5b6072;
+  transition:background .15s, color .15s;
+}
+.ap-nav-item:hover{background:#eef0f7; color:#1f2430;}
+.ap-nav-item.active{background:#eef1fd; color:#4a55c7;}
+.ap-nav-icon{
+  width:30px; height:30px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:13px; background:rgba(79,95,214,.09); color:#6169c9; transition:background .15s, color .15s;
+}
+.ap-nav-item.active .ap-nav-icon{background:#4a55c7; color:#fff;}
+.ap-nav-item:hover .ap-nav-icon{background:rgba(79,95,214,.16);}
+
+/* --- אזור תוכן --- */
+.ap-content{flex:1; min-width:0; display:flex; flex-direction:column; height:100%; background:#fff;}
+.ap-content-hdr{
+  padding:18px 24px; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid #f1f2f6; flex-shrink:0;
+}
+.ap-content-title{font-size:16px; font-weight:900; color:#1f2430;}
+.ap-hdr-close{
+  background:#f4f5f9; border:none; color:#8a90a6; width:32px; height:32px; border-radius:10px;
+  cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:background .15s, color .15s;
+}
+.ap-hdr-close:hover{background:#eceef4; color:#4a4f63;}
+.ap-content-body{flex:1; overflow-y:auto; padding:20px 24px 28px;}
+.ap-sec{animation:apSecIn .22s ease-out both;}
+@keyframes apSecIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* --- רכיבי תוכן משותפים (עדינים) --- */
+.ap-stat-card{background:#f8f9fc; border:1px solid #eef0f5; border-radius:14px; padding:16px; text-align:center;}
+.ap-stat-num{font-size:22px; font-weight:900; color:#4a55c7; margin:6px 0 2px;}
+.ap-stat-lbl{font-size:11.5px; font-weight:700; color:#8a90a6;}
+.ap-field{border:1.5px solid #eef0f5; background:#fbfbfd; border-radius:11px; padding:9px 13px; font-size:13px; outline:none; font-family:'Heebo',sans-serif; width:100%; transition:border-color .15s, background .15s;}
+.ap-field:focus{border-color:#c2c8f0; background:#fff;}
+.ap-btn{border:none; border-radius:11px; padding:10px 16px; font-size:13px; font-weight:800; cursor:pointer; font-family:'Heebo',sans-serif; transition:filter .15s, background .15s;}
+.ap-btn:hover{filter:brightness(.96);}
+.ap-btn-primary{background:#4a55c7; color:#fff;}
+.ap-btn-soft{background:#f4f5f9; color:#4a4f63;}
+.ap-btn-danger{background:#fdf1f1; color:#c94b4b; border:1px solid #f6dede;}
+.ap-empty{text-align:center; padding:34px 10px; color:#a3a8b8; font-size:13px; font-weight:600;}
+.ap-row-card{display:flex; align-items:center; gap:11px; padding:11px; border-radius:13px; background:#f8f9fc; border:1px solid #eef0f5;}
+
+@media(max-width:680px){
+  .ap-box{flex-direction:column; height:min(92vh,640px); max-width:460px;}
+  .ap-sidebar{width:100%; min-width:0; border-left:none; border-bottom:1px solid #eef0f5; flex-direction:row; align-items:center;}
+  .ap-sidebar-user{border-bottom:none; border-left:1px solid #eef0f5; flex-shrink:0;}
+  .ap-nav{flex:1; display:flex; overflow-x:auto; overflow-y:hidden; padding:10px; gap:4px;}
+  .ap-nav-item{width:auto; white-space:nowrap; margin-bottom:0;}
+}
 
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1071,9 +760,6 @@ body.dark #adminPanelModal.open{background:rgba(0,0,0,.75);}
       
       <button class="hdr-icon-btn" onclick="window.open('mailto:0548537646a@gmail.com?subject=%D7%9C%D7%9B%D7%91%D7%95%D7%93%20%D7%9E%D7%A0%D7%94%D7%9C%20%D7%90%D7%AA%D7%A8%20%D7%91%D7%99%D7%A0%D7%94%20%D7%95%D7%93%D7%A2%D7%94','_blank')" title="פנייה למנהל">
         <i class="fas fa-envelope" style="font-size:13px"></i>
-      </button>
-      <button class="hdr-icon-btn" onclick="toggleCreatorsPanel()" title="היוצרים שלנו">
-        <i class="fas fa-users" style="font-size:13px"></i>
       </button>
       <button id="darkBtn" onclick="toggleDark()" title="מצב כהה">
         <i class="fas fa-moon" style="font-size:13px"></i>
@@ -1251,22 +937,6 @@ body.dark #adminPanelModal.open{background:rgba(0,0,0,.75);}
   </div>
 </div>
 
-<div id="leaderboardModal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px);">
-  <div style="background:#fff;border-radius:24px;width:100%;max-width:600px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.25);overflow:hidden;">
-    <div style="padding:20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg, #1a56db, #7c3aed);color:white;">
-      <span style="font-size:18px;font-weight:900;"><i class="fas fa-trophy" style="color:#fde047;"></i> דירוג יוצרים מובילים</span>
-      <button onclick="closeLeaderboard()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#fff;opacity:0.8;">✕</button>
-    </div>
-    <div style="padding:12px; background:#f9fafb; display:flex; justify-content:center; gap:10px; border-bottom:1px solid #e5e7eb;">
-      <button id="lbTabPodium" class="lb-tab active" onclick="switchLbView('podium')"><i class="fas fa-medal"></i> פודיום</button>
-      <button id="lbTabBars" class="lb-tab" onclick="switchLbView('bars')"><i class="fas fa-chart-bar"></i> עמודות</button>
-      <button id="lbTabList" class="lb-tab" onclick="switchLbView('list')"><i class="fas fa-list-ol"></i> רשימה</button>
-    </div>
-    <div id="lbContent" style="flex:1;overflow-y:auto;padding:24px;background:#f9fafb;">
-    </div>
-  </div>
-</div>
-
 <div id="updateTimeDialog">
   <div class="utd-box">
     <div class="utd-title">🟢 הפעלת מצב מעדכן</div>
@@ -1278,26 +948,6 @@ body.dark #adminPanelModal.open{background:rgba(0,0,0,.75);}
     </div>
   </div>
 </div>
-
-<div id="siteSettingsModal">
-  <div class="ss-box">
-    <div class="ss-title">
-      <span>⚙️ הגדרות מערכת מתקדמות</span>
-      <button onclick="closeSiteSettings()" style="background:none;border:none;font-size:16px;cursor:pointer;color:#aaa;">✕</button>
-    </div>
-    <div class="ss-section">
-      <div class="ss-section-title">חסימת משתמשים (Ban)</div>
-      <input type="email" id="settingsBlockEmail" class="ss-input" placeholder="הכנס אימייל לחסימה...">
-      <button class="ss-btn" style="background:#dc2626;" onclick="blockUser()">חסום משתמש</button>
-      <div id="blockedUsersList" style="margin-top:10px; font-size:12px; color:#666;"></div>
-    </div>
-    <div class="ss-section" id="exportSection">
-      <div class="ss-section-title">ייצוא נתונים</div>
-      <button class="ss-btn" onclick="exportEmailsToGroups()" style="background:#059669;">הורד רשימת אימיילים (TXT)</button>
-    </div>
-  </div>
-</div>
-
 
 <div id="emojiPicker">
   <button class="ep-close-btn" onclick="document.getElementById('emojiPicker').classList.remove('show')" title="סגור" style="position:absolute;top:6px;left:6px;background:none;border:none;cursor:pointer;color:#aaa;font-size:13px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .1s;z-index:2;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">✕</button>
@@ -1330,89 +980,6 @@ body.dark #adminPanelModal.open{background:rgba(0,0,0,.75);}
   <button class="ep-btn" onclick="pickEmoji('😨')">😨</button>
   <button class="ep-btn" onclick="pickEmoji('🤣')">🤣</button>
   <button class="ep-btn" onclick="pickEmoji('📖')">📖</button>
-</div>
-
-<div id="adModal" style="display:none;position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.5);align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:20px;padding:28px;max-width:500px;width:92%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);position:relative">
-    <button onclick="closeAdPanel()" style="position:absolute;top:14px;left:14px;background:#f3f4f6;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;color:#666;font-size:14px">✕</button>
-    <div style="font-size:16px;font-weight:800;color:#111;margin-bottom:20px;text-align:right">📢 ניהול פרסומות</div>
-    <div style="border:1.5px solid #e5e7eb;border-radius:14px;padding:16px;margin-bottom:14px;">
-      <div style="font-size:13px;font-weight:800;color:#1a56db;margin-bottom:12px;"><i class="fas fa-window-restore" style="font-size:12px"></i> פרסומת פופאפ</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <input id="adPopupImageUrl" type="text" placeholder="קישור לתמונה https://..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:'Heebo',sans-serif;width:100%">
-        <input id="adPopupLinkUrl" type="text" placeholder="קישור ללחיצה https://..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:'Heebo',sans-serif;width:100%">
-        <textarea id="adPopupHtmlUrl" rows="3" placeholder="או הדבק כאן קוד HTML מלא..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:monospace;width:100%"></textarea>
-        <input id="adPopupTimer" type="number" placeholder="שניות השהיה (מקסימום 5)" min="0" max="5" style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;font-family:'Heebo',sans-serif;width:100%">
-        <div style="display:flex;gap:8px;margin-top:5px;">
-          <button onclick="saveAd('popup')" style="flex:1;background:#1a56db;color:#fff;border:none;border-radius:10px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif">שמור</button>
-          <button onclick="deleteAd('popup')" style="flex:1;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:10px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif">הסר</button>
-        </div>
-      </div>
-    </div>
-    <div style="border:1.5px solid #e5e7eb;border-radius:14px;padding:16px;">
-      <div style="font-size:13px;font-weight:800;color:#059669;margin-bottom:12px;"><i class="fas fa-columns" style="font-size:12px"></i> פרסומת עמודה צדדית</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <input id="adSideImageUrl" type="text" placeholder="קישור לתמונה https://..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:'Heebo',sans-serif;width:100%">
-        <input id="adSideLinkUrl" type="text" placeholder="קישור ללחיצה https://... (לתמונה בלבד)" style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:'Heebo',sans-serif;width:100%">
-        <textarea id="adSideHtmlUrl" rows="3" placeholder="או הדבק כאן קוד HTML מלא..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:monospace;width:100%"></textarea>
-        <div style="display:flex;gap:8px">
-          <button onclick="saveAd('side')" style="flex:1;background:#059669;color:#fff;border:none;border-radius:10px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif">שמור</button>
-          <button onclick="deleteAd('side')" style="flex:1;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:10px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif">הסר</button>
-        </div>
-      </div>
-    </div>
-    <div id="adMsg" style="display:none;margin-top:12px;font-size:12px;font-weight:600;text-align:center"></div>
-  </div>
-</div>
-
-<div id="adminMsgsModal" onclick="closeAdminMsgs()">
-  <div class="admin-msgs-box" onclick="event.stopPropagation()">
-    <div class="admin-msgs-hdr">
-      <span class="admin-msgs-title">📢 הודעות מנהל</span>
-      <button class="admin-msgs-close" onclick="closeAdminMsgs()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="admin-msgs-body" id="adminMsgsBody">
-      <div style="text-align:center;padding:30px;color:#aaa;font-size:13px;">אין הודעות</div>
-    </div>
-    <div class="admin-msgs-send" id="adminMsgsSendRow">
-      <textarea class="admin-send-inp" id="adminMsgInput" rows="1" placeholder="שלח הודעה לכל המנהלים..."
-        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAdminMsg();}"></textarea>
-      <button class="admin-send-btn" onclick="sendAdminMsg()">
-        <i class="fas fa-paper-plane" style="font-size:11px"></i>
-      </button>
-    </div>
-  </div>
-</div>
-
-<div id="manageAdminsModal" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#fff;border-radius:20px;max-width:440px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.25);overflow:hidden;">
-    <div style="padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-      <span style="font-size:15px;font-weight:800;color:#111;">⚙️ ניהול צוות ויוצרים</span>
-      <button onclick="closeManageAdmins()" style="background:none;border:none;font-size:16px;cursor:pointer;color:#aaa;padding:4px;border-radius:8px;">✕</button>
-    </div>
-    <div id="adminsList" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;"></div>
-    <div style="padding:14px 16px;border-top:1px solid #f0f0f0;flex-shrink:0;">
-      <div style="font-size:11px;font-weight:700;color:#6b7280;margin-bottom:8px;">הוספת יוצר / איש צוות חדש</div>
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        <input id="newAdminEmail" type="email" placeholder="אימייל Google..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:'Heebo',sans-serif;width:100%;transition:border-color .15s;">
-        <input id="newAdminName" type="text" placeholder="שם תצוגה (יופיע בפוסטים)..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:rtl;font-family:'Heebo',sans-serif;width:100%;transition:border-color .15s;">
-        <div style="font-size:11px;color:#9ca3af;">הוספה כאן נותנת הרשאת כתיבה כללית (writer). כדי להעניק הרשאת ניהול מלאה (admin) יש להוסיף את המייל בגיליון עצמו, בטאב Admins.</div>
-        <button onclick="addAdmin()" style="background:#1a56db;color:#fff;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">+ הוסף משתמש</button>
-      </div>
-      <div id="adminMsgResult" style="display:none;margin-top:8px;font-size:12px;font-weight:600;text-align:center;"></div>
-    </div>
-  </div>
-</div>
-
-<div id="reportsModal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#fff;border-radius:20px;max-width:500px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.25);overflow:hidden;">
-    <div style="padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-      <span style="font-size:15px;font-weight:800;color:#111;">🚩 דיווחי משתמשים</span>
-      <button onclick="closeReportsModal()" style="background:none;border:none;font-size:16px;cursor:pointer;color:#aaa;padding:4px;border-radius:8px;">✕</button>
-    </div>
-    <div id="reportsList" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;"></div>
-  </div>
 </div>
 
 <div id="lightbox" onclick="closeLightbox()">
@@ -1455,71 +1022,118 @@ body.dark #adminPanelModal.open{background:rgba(0,0,0,.75);}
     </div>
   </div>
 </div>
-<div id="creatorsPanel">
-  <div class="cp-glass" style="position:relative;">
-    <div class="cp-glass-hdr">
-      <span class="cp-glass-title">יוצרים</span>
-      <button class="cp-glass-close" onclick="closeCreatorsPanel()">✕</button>
-    </div>
-    <div class="cp-glass-list-wrap" style="position:relative;">
-      <div class="cp-glass-list" id="creatorsGlassList"></div>
-      <div class="cp-glass-list-fade" id="creatorsListFade"></div>
-    </div>
-  </div>
-</div>
-
-<div id="siteStatsModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:999999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
-  <div style="background:#fff; border-radius:16px; width:90%; max-width:400px; padding:24px; box-shadow:0 20px 40px rgba(0,0,0,0.2); text-align:center; direction:rtl; position:relative;">
-    <button onclick="closeSiteStats()" style="position:absolute; top:15px; left:15px; background:none; border:none; font-size:18px; cursor:pointer; color:#9ca3af; transition:0.2s;">✕</button>
-    <h2 style="margin:0 0 5px 0; color:#1e293b; font-size:20px; font-weight:900;">סטטיסטיקות קהילה</h2>
-    <p style="margin:0 0 20px 0; color:#64748b; font-size:13px;">נתוני גלישה ופעילות באתר</p>
-    
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:15px; text-align:center;">
-        <i class="fas fa-circle" style="color:#22c55e; font-size:10px; animation:pulse-dot 2s infinite;"></i>
-        <div style="font-size:24px; font-weight:900; color:#1a56db; margin:5px 0;" id="statOnline">-</div>
-        <div style="font-size:12px; font-weight:bold; color:#475569;">מחוברים כעת</div>
-      </div>
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:15px; text-align:center;">
-        <i class="fas fa-trophy" style="color:#fbbf24; font-size:14px;"></i>
-        <div style="font-size:24px; font-weight:900; color:#d97706; margin:5px 0;" id="statPeak">-</div>
-        <div style="font-size:12px; font-weight:bold; color:#475569;">שיא משתמשים</div>
-      </div>
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:15px; text-align:center;">
-        <i class="fas fa-clock" style="color:#64748b; font-size:14px;"></i>
-        <div style="font-size:20px; font-weight:900; color:#334155; margin:5px 0;" id="statHour">-</div>
-        <div style="font-size:12px; font-weight:bold; color:#475569;">בשעה האחרונה</div>
-      </div>
-      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:15px; text-align:center;">
-        <i class="fas fa-calendar-day" style="color:#64748b; font-size:14px;"></i>
-        <div style="font-size:20px; font-weight:900; color:#334155; margin:5px 0;" id="statDay">-</div>
-        <div style="font-size:12px; font-weight:bold; color:#475569;">ביממה האחרונה</div>
-      </div>
-    </div>
-    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:12px; text-align:center;">
-      <div style="font-size:20px; font-weight:900; color:#1d4ed8;" id="statWeek">-</div>
-      <div style="font-size:12px; font-weight:bold; color:#1e40af;">משתמשים ייחודיים בשבוע האחרון</div>
-    </div>
-  </div>
-</div>
-
 <div id="adminPanelModal" onclick="if(event.target===this)closeAdminPanel()">
   <div class="ap-box" onclick="event.stopPropagation()">
-    <div class="ap-hdr">
-      <div class="ap-hdr-top">
-        <div class="ap-hdr-user">
-          <div id="apHdrAvatarWrap"></div>
-          <div style="min-width:0;">
-            <div class="ap-hdr-name" id="apHdrName">-</div>
-            <div class="ap-hdr-role" id="apHdrRole"><i class="fas fa-crown" style="font-size:9px;"></i> <span></span></div>
-          </div>
+
+    <div class="ap-sidebar">
+      <div class="ap-sidebar-user">
+        <div id="apHdrAvatarWrap"></div>
+        <div style="min-width:0;">
+          <div class="ap-sidebar-name" id="apHdrName">-</div>
+          <div class="ap-sidebar-role" id="apHdrRole">-</div>
         </div>
+      </div>
+      <nav class="ap-nav" id="apNav"></nav>
+    </div>
+
+    <div class="ap-content">
+      <div class="ap-content-hdr">
+        <span class="ap-content-title" id="apContentTitle">פאנל ניהול</span>
         <button class="ap-hdr-close" onclick="closeAdminPanel()"><i class="fas fa-times"></i></button>
       </div>
-      <div class="ap-hdr-title"><i class="fas fa-shield-halved"></i> פאנל ניהול</div>
-      <div class="ap-hdr-sub">כל כלי הניהול והצוות במקום אחד</div>
+      <div class="ap-content-body" id="apContentBody">
+
+        <div class="ap-sec" id="ap-sec-stats">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div class="ap-stat-card"><i class="fas fa-circle" style="color:#5fc98d;font-size:8px;"></i><div class="ap-stat-num" id="statOnline">-</div><div class="ap-stat-lbl">מחוברים כעת</div></div>
+            <div class="ap-stat-card"><i class="fas fa-trophy" style="color:#d8b45a;font-size:12px;"></i><div class="ap-stat-num" id="statPeak">-</div><div class="ap-stat-lbl">שיא משתמשים</div></div>
+            <div class="ap-stat-card"><i class="fas fa-clock" style="color:#a3a8b8;font-size:12px;"></i><div class="ap-stat-num" id="statHour">-</div><div class="ap-stat-lbl">בשעה האחרונה</div></div>
+            <div class="ap-stat-card"><i class="fas fa-calendar-day" style="color:#a3a8b8;font-size:12px;"></i><div class="ap-stat-num" id="statDay">-</div><div class="ap-stat-lbl">ביממה האחרונה</div></div>
+          </div>
+          <div class="ap-stat-card" style="text-align:center;">
+            <div class="ap-stat-num" id="statWeek">-</div>
+            <div class="ap-stat-lbl">משתמשים ייחודיים בשבוע האחרון</div>
+          </div>
+        </div>
+
+        <div class="ap-sec" id="ap-sec-reports" style="display:none;">
+          <div id="reportsList" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <div class="ap-sec" id="ap-sec-writers" style="display:none;">
+          <div id="adminsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;"></div>
+          <div style="border-top:1px solid #f1f2f6;padding-top:16px;">
+            <div style="font-size:12px;font-weight:800;color:#5b6072;margin-bottom:9px;">הוספת יוצר / איש צוות חדש</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <input id="newAdminEmail" type="email" placeholder="אימייל Google..." class="ap-field" style="direction:ltr;">
+              <input id="newAdminName" type="text" placeholder="שם תצוגה (יופיע בפוסטים)..." class="ap-field">
+              <div style="font-size:11px;color:#a3a8b8;line-height:1.5;">הוספה כאן נותנת הרשאת כתיבה כללית (writer). כדי להעניק הרשאת ניהול מלאה (admin) יש להוסיף את המייל בגיליון עצמו, בטאב Admins.</div>
+              <button onclick="addAdmin()" class="ap-btn ap-btn-primary">+ הוסף משתמש</button>
+            </div>
+            <div id="adminMsgResult" style="display:none;margin-top:10px;font-size:12px;font-weight:700;text-align:center;"></div>
+          </div>
+        </div>
+
+        <div class="ap-sec" id="ap-sec-blocking" style="display:none;">
+          <div style="margin-bottom:22px;">
+            <div style="font-size:12px;font-weight:800;color:#5b6072;margin-bottom:9px;">חסימת משתמשים</div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+              <input type="email" id="settingsBlockEmail" class="ap-field" placeholder="הכנס אימייל לחסימה...">
+              <button class="ap-btn ap-btn-danger" style="flex-shrink:0;" onclick="blockUser()">חסום</button>
+            </div>
+            <div id="blockedUsersList" style="font-size:12px;color:#8a90a6;"></div>
+          </div>
+          <div style="border-top:1px solid #f1f2f6;padding-top:16px;">
+            <div style="font-size:12px;font-weight:800;color:#5b6072;margin-bottom:9px;">ייצוא נתונים</div>
+            <button class="ap-btn ap-btn-soft" onclick="exportEmailsToGroups()"><i class="fas fa-download" style="font-size:11px;"></i> הורד רשימת אימיילים (TXT)</button>
+          </div>
+        </div>
+
+        <div class="ap-sec" id="ap-sec-ads" style="display:none;">
+          <div style="border:1.5px solid #eef0f5;border-radius:14px;padding:16px;margin-bottom:14px;">
+            <div style="font-size:12.5px;font-weight:800;color:#4a55c7;margin-bottom:11px;"><i class="fas fa-window-restore" style="font-size:11px"></i> פרסומת פופאפ</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <input id="adPopupImageUrl" type="text" placeholder="קישור לתמונה https://..." class="ap-field" style="direction:ltr;">
+              <input id="adPopupLinkUrl" type="text" placeholder="קישור ללחיצה https://..." class="ap-field" style="direction:ltr;">
+              <textarea id="adPopupHtmlUrl" rows="3" placeholder="או הדבק כאן קוד HTML מלא..." class="ap-field" style="direction:ltr;font-family:monospace;"></textarea>
+              <input id="adPopupTimer" type="number" placeholder="שניות השהיה (מקסימום 5)" min="0" max="5" class="ap-field">
+              <div style="display:flex;gap:8px;margin-top:3px;">
+                <button onclick="saveAd('popup')" class="ap-btn ap-btn-primary" style="flex:1;">שמור</button>
+                <button onclick="deleteAd('popup')" class="ap-btn ap-btn-danger" style="flex:1;">הסר</button>
+              </div>
+            </div>
+          </div>
+          <div style="border:1.5px solid #eef0f5;border-radius:14px;padding:16px;">
+            <div style="font-size:12.5px;font-weight:800;color:#4a55c7;margin-bottom:11px;"><i class="fas fa-columns" style="font-size:11px"></i> פרסומת עמודה צדדית</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <input id="adSideImageUrl" type="text" placeholder="קישור לתמונה https://..." class="ap-field" style="direction:ltr;">
+              <input id="adSideLinkUrl" type="text" placeholder="קישור ללחיצה https://... (לתמונה בלבד)" class="ap-field" style="direction:ltr;">
+              <textarea id="adSideHtmlUrl" rows="3" placeholder="או הדבק כאן קוד HTML מלא..." class="ap-field" style="direction:ltr;font-family:monospace;"></textarea>
+              <div style="display:flex;gap:8px">
+                <button onclick="saveAd('side')" class="ap-btn ap-btn-primary" style="flex:1;">שמור</button>
+                <button onclick="deleteAd('side')" class="ap-btn ap-btn-danger" style="flex:1;">הסר</button>
+              </div>
+            </div>
+          </div>
+          <div id="adMsg" style="display:none;margin-top:12px;font-size:12px;font-weight:700;text-align:center"></div>
+        </div>
+
+        <div class="ap-sec" id="ap-sec-messages" style="display:none;display:flex;flex-direction:column;height:100%;">
+          <div class="admin-msgs-body" id="adminMsgsBody" style="flex:1;overflow-y:auto;margin-bottom:10px;">
+            <div class="ap-empty">אין הודעות</div>
+          </div>
+          <div class="admin-msgs-send" id="adminMsgsSendRow" style="display:flex;gap:8px;align-items:flex-end;flex-shrink:0;">
+            <textarea class="ap-field admin-send-inp" id="adminMsgInput" rows="1" placeholder="שלח הודעה לכל המנהלים..."
+              oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAdminMsg();}"></textarea>
+            <button class="ap-btn ap-btn-primary admin-send-btn" onclick="sendAdminMsg()" style="flex-shrink:0;">
+              <i class="fas fa-paper-plane" style="font-size:11px"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div class="ap-body" id="adminPanelBody"></div>
   </div>
 </div>
 
@@ -1748,7 +1362,17 @@ function refreshUserMenu() {
     </div>`;
 }
 
-/* ================= פאנל ניהול (מודרני) ================= */
+/* ================= פאנל ניהול (עדין ובהיר, עם סרגל צד) ================= */
+let _adminPanelActiveSection = null;
+const AP_SECTIONS = [
+  { key: 'stats', icon: 'fa-chart-line', title: 'סטטיסטיקות קהילה', superOnly: false },
+  { key: 'reports', icon: 'fa-flag', title: 'דיווחי משתמשים', superOnly: true },
+  { key: 'writers', icon: 'fa-user-group', title: 'מורשי כתיבה', superOnly: true },
+  { key: 'blocking', icon: 'fa-user-slash', title: 'חסימת משתמשים', superOnly: true },
+  { key: 'ads', icon: 'fa-rectangle-ad', title: 'פרסומות', superOnly: true },
+  { key: 'messages', icon: 'fa-comments', title: 'הודעות צוות', superOnly: true },
+];
+
 function openAdminPanel() {
   if (!me || !isAdmin()) return;
   document.getElementById('userMenu') && (document.getElementById('userMenu').style.display = 'none');
@@ -1757,46 +1381,42 @@ function openAdminPanel() {
   const avWrap = document.getElementById('apHdrAvatarWrap');
   avWrap.innerHTML = me.picture
     ? `<img src="${escAttr(me.picture)}">`
-    : `<div class="ap-hdr-avatar-fallback">${esc(me.name[0].toUpperCase())}</div>`;
+    : `<div class="ap-sidebar-avatar-fallback">${esc(me.name[0].toUpperCase())}</div>`;
   document.getElementById('apHdrName').innerText = me.name;
-  document.getElementById('apHdrRole').querySelector('span').innerText = role === 'super' ? 'מנהל ראשי' : 'כותב מורשה';
+  document.getElementById('apHdrRole').innerText = role === 'super' ? 'מנהל ראשי' : 'כותב מורשה';
 
-  const teamCards = [
-    { icon: 'fa-chart-bar', color: '#ea580c', title: 'דירוג יוצרים', desc: 'מי הכי פעיל ומוביל בקהילה', fn: 'openLeaderboard()' },
-    { icon: 'fa-chart-line', color: '#0891b2', title: 'סטטיסטיקות קהילה', desc: 'נתוני גלישה ופעילות באתר', fn: 'openSiteStats()' },
-  ];
-  const superCards = [
-    { icon: 'fa-flag', color: '#dc2626', title: 'דיווחי משתמשים', desc: 'טיפול בתכנים שדווחו', fn: 'openReportsModal()' },
-    { icon: 'fa-user-cog', color: '#1a56db', title: 'מורשי כתיבה', desc: 'ניהול צוות ויוצרי תוכן', fn: 'openManageAdmins()' },
-    { icon: 'fa-tools', color: '#7c3aed', title: 'חסימת משתמשים', desc: 'הגבלת גישה למשתמשים', fn: 'openSiteSettings()' },
-    { icon: 'fa-ad', color: '#ca8a04', title: 'פרסומות', desc: 'ניהול באנרים ומודעות באתר', fn: 'openAdPanel()' },
-    { icon: 'fa-bullhorn', color: '#e02020', title: 'הודעות לצוות', desc: 'שליחת עדכונים לכלל המנהלים', fn: 'openAdminMsgs()' },
-  ];
+  const visible = AP_SECTIONS.filter(s => role === 'super' || !s.superOnly);
+  document.getElementById('apNav').innerHTML = visible.map(s => `
+    <button class="ap-nav-item" data-sec="${s.key}" onclick="switchAdminSection('${s.key}')">
+      <span class="ap-nav-icon"><i class="fas ${s.icon}"></i></span>
+      <span>${s.title}</span>
+    </button>`).join('');
 
-  function cardHtml(c) {
-    return `<div class="ap-card" onclick="closeAdminPanel();${c.fn}">
-      <div class="ap-card-icon" style="background:${c.color};"><i class="fas ${c.icon}"></i></div>
-      <div class="ap-card-txt"><div class="ap-card-title">${c.title}</div><div class="ap-card-desc">${c.desc}</div></div>
-      <i class="fas fa-chevron-left ap-card-arrow"></i>
-    </div>`;
-  }
-
-  let html = `<div class="ap-section-lbl"><i class="fas fa-layer-group" style="font-size:10px;"></i> כלי צוות</div>
-    <div class="ap-grid">${teamCards.map(cardHtml).join('')}</div>`;
-  if (role === 'super') {
-    html += `<div class="ap-section-lbl"><i class="fas fa-crown" style="font-size:10px;"></i> ניהול ראשי</div>
-      <div class="ap-grid">${superCards.map(cardHtml).join('')}</div>`;
-  }
-  document.getElementById('adminPanelBody').innerHTML = html;
   document.getElementById('adminPanelModal').classList.add('open');
+  switchAdminSection(visible[0].key);
 }
-function closeAdminPanel() { document.getElementById('adminPanelModal').classList.remove('open'); }
+function closeAdminPanel() {
+  document.getElementById('adminPanelModal').classList.remove('open');
+  _adminPanelActiveSection = null;
+}
+function switchAdminSection(sec) {
+  _adminPanelActiveSection = sec;
+  document.querySelectorAll('.ap-nav-item').forEach(b => b.classList.toggle('active', b.dataset.sec === sec));
+  document.querySelectorAll('.ap-sec').forEach(s => s.style.display = (s.id === 'ap-sec-' + sec) ? (sec === 'messages' ? 'flex' : 'block') : 'none');
+  const found = AP_SECTIONS.find(s => s.key === sec);
+  document.getElementById('apContentTitle').innerText = found ? found.title : 'פאנל ניהול';
+  if (sec === 'stats') openSiteStats();
+  else if (sec === 'reports') openReportsModal();
+  else if (sec === 'writers') openManageAdmins();
+  else if (sec === 'blocking') openSiteSettings();
+  else if (sec === 'ads') openAdPanel();
+  else if (sec === 'messages') openAdminMsgs();
+}
 
 async function loadWritersMap() {
   const d = await api('allowed_list', {});
   _writersMap = {};
   (d.list || []).forEach(w => { if (w.email) _writersMap[w.email.toLowerCase()] = { name: w.name || w.email.split('@')[0] }; });
-  renderCreatorsSidebar(d.list || []);
 }
 
 function applyWritePerm() {
@@ -1997,26 +1617,25 @@ async function submitReport() {
 }
 
 async function openReportsModal() {
-  document.getElementById('reportsModal').style.display = 'flex';
   document.getElementById('reportsList').innerHTML = '<div style="text-align:center;padding:20px;"><i class="fas fa-spinner fa-spin"></i> טוען דיווחים...</div>';
   const d = await api('reports_get', { email: me.email });
   const reports = d.reports || [];
-  if (!reports.length) { document.getElementById('reportsList').innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;">אין דיווחים פתוחים.</div>'; return; }
+  if (!reports.length) { document.getElementById('reportsList').innerHTML = '<div class="ap-empty">אין דיווחים פתוחים.</div>'; return; }
   document.getElementById('reportsList').innerHTML = reports.map(r => `
-    <div style="background:#fef2f2; border:1.5px solid #fecaca; border-radius:14px; padding:14px; margin-bottom:10px;">
+    <div class="ap-row-card" style="flex-direction:column;align-items:stretch;background:#fdf6f6;border-color:#f6dede;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <div style="display:flex;align-items:center;gap:6px;"><i class="fas fa-flag" style="color:#dc2626;font-size:11px;"></i><span style="font-weight:800;color:#b91c1c;font-size:13px;">דיווח על הודעה</span></div>
-        <a href="#" onclick="scrollToReportedMsg('${r.msgId}'); closeReportsModal(); return false;" style="font-size:11px;font-weight:700;color:#1a56db;text-decoration:none;background:#eff6ff;padding:3px 9px;border-radius:6px;border:1px solid #bfdbfe;"><i class="fas fa-arrow-left" style="font-size:9px;"></i> עבור להודעה</a>
+        <div style="display:flex;align-items:center;gap:6px;"><i class="fas fa-flag" style="color:#c94b4b;font-size:11px;"></i><span style="font-weight:800;color:#b1483f;font-size:13px;">דיווח על הודעה</span></div>
+        <a href="#" onclick="scrollToReportedMsg('${r.msgId}'); closeReportsModal(); return false;" style="font-size:11px;font-weight:700;color:#4a55c7;text-decoration:none;background:#eef1fd;padding:3px 9px;border-radius:6px;border:1px solid #d9deed;"><i class="fas fa-arrow-left" style="font-size:9px;"></i> עבור להודעה</a>
       </div>
-      <div style="font-size:12px;color:#6b7280;margin-bottom:4px;"><b>מדווח:</b> ${esc(r.reporterEmail || r.email)}</div>
-      <div style="font-size:12px;color:#6b7280;margin-bottom:10px;"><b>סיבה:</b> ${esc(r.reason)}</div>
+      <div style="font-size:12px;color:#7a7f92;margin-bottom:4px;"><b>מדווח:</b> ${esc(r.reporterEmail || r.email)}</div>
+      <div style="font-size:12px;color:#7a7f92;margin-bottom:10px;"><b>סיבה:</b> ${esc(r.reason)}</div>
       <div style="display:flex;gap:8px;">
-        <button onclick="deleteFeedMsg('${r.msgId}');dismissReport('${r.id}')" style="flex:1;background:#dc2626;color:#fff;border:none;padding:7px;border-radius:8px;cursor:pointer;font-family:'Heebo';font-weight:800;font-size:12px;"><i class="fas fa-trash" style="font-size:10px;"></i> מחק פוסט</button>
-        <button onclick="dismissReport('${r.id}')" style="flex:1;background:#f3f4f6;color:#374151;border:1px solid #d1d5db;padding:7px;border-radius:8px;cursor:pointer;font-family:'Heebo';font-weight:800;font-size:12px;"><i class="fas fa-check" style="font-size:10px;"></i> טופל</button>
+        <button onclick="deleteFeedMsg('${r.msgId}');dismissReport('${r.id}')" class="ap-btn ap-btn-danger" style="flex:1;"><i class="fas fa-trash" style="font-size:10px;"></i> מחק פוסט</button>
+        <button onclick="dismissReport('${r.id}')" class="ap-btn ap-btn-soft" style="flex:1;"><i class="fas fa-check" style="font-size:10px;"></i> טופל</button>
       </div>
     </div>`).join('');
 }
-function closeReportsModal() { document.getElementById('reportsModal').style.display = 'none'; }
+function closeReportsModal() { closeAdminPanel(); }
 function scrollToReportedMsg(msgId) {
   const el = document.querySelector('[data-id="' + msgId + '"]');
   if (el) { el.id = 'msg-link-' + msgId; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.outline = '2px solid #dc2626'; setTimeout(() => el.style.outline = '', 1800); }
@@ -2342,8 +1961,8 @@ function switchLbView(viewType) {
 
 /* ================= הגדרות אתר (חסימות) ================= */
 let siteBlockedEmails = [];
-function openSiteSettings() { document.getElementById('siteSettingsModal').classList.add('open'); loadSiteSettingsData(); }
-function closeSiteSettings() { document.getElementById('siteSettingsModal').classList.remove('open'); }
+function openSiteSettings() { loadSiteSettingsData(); }
+function closeSiteSettings() { closeAdminPanel(); }
 async function loadSiteSettingsData() {
   const d = await api('api_settings', {});
   siteBlockedEmails = d.blockedEmails || [];
@@ -2360,7 +1979,7 @@ async function blockUser() {
 function renderBlockedUsers() {
   const el = document.getElementById('blockedUsersList');
   if (!siteBlockedEmails.length) { el.innerHTML = 'אין משתמשים חסומים.'; return; }
-  el.innerHTML = siteBlockedEmails.map(email => `<div style="display:flex; justify-content:space-between; background:#fef2f2; padding:5px; margin-bottom:5px; border:1px solid #fecaca; border-radius:5px;"><span>${esc(email)}</span><button onclick="unblockUser('${escAttr(email)}')" style="color:red; background:none; border:none; cursor:pointer;">הסר חסימה</button></div>`).join('');
+  el.innerHTML = siteBlockedEmails.map(email => `<div style="display:flex;align-items:center;justify-content:space-between;background:#fdf6f6;padding:8px 11px;margin-bottom:6px;border:1px solid #f6dede;border-radius:10px;font-size:12.5px;color:#5b6072;"><span>${esc(email)}</span><button onclick="unblockUser('${escAttr(email)}')" style="color:#c94b4b;background:none;border:none;cursor:pointer;font-weight:700;font-size:12px;font-family:'Heebo',sans-serif;">הסר חסימה</button></div>`).join('');
 }
 async function unblockUser(email) {
   siteBlockedEmails = siteBlockedEmails.filter(e => e !== email); renderBlockedUsers();
@@ -2411,12 +2030,11 @@ function showAdPopup(ad) {
 function closeAd() { document.getElementById('adOverlay')?.remove(); }
 
 async function openAdPanel() {
-  document.getElementById('adModal').style.display = 'flex';
   const d = await api('ad_get', {});
   if (d.popup) { document.getElementById('adPopupImageUrl').value = d.popup.imageUrl || ''; document.getElementById('adPopupLinkUrl').value = d.popup.link || ''; document.getElementById('adPopupHtmlUrl').value = d.popup.htmlCode || ''; document.getElementById('adPopupTimer').value = d.popup.timer || 0; }
   if (d.side) { document.getElementById('adSideImageUrl').value = d.side.imageUrl || ''; document.getElementById('adSideLinkUrl').value = d.side.link || ''; document.getElementById('adSideHtmlUrl').value = d.side.htmlCode || ''; }
 }
-function closeAdPanel() { document.getElementById('adModal').style.display = 'none'; }
+function closeAdPanel() { closeAdminPanel(); }
 async function saveAd(type) {
   const imgEl = type === 'popup' ? 'adPopupImageUrl' : 'adSideImageUrl'; const lnkEl = type === 'popup' ? 'adPopupLinkUrl' : 'adSideLinkUrl'; const htmlEl = type === 'popup' ? 'adPopupHtmlUrl' : 'adSideHtmlUrl';
   const imageUrl = document.getElementById(imgEl).value.trim(); const linkUrl = document.getElementById(lnkEl).value.trim(); const htmlCode = document.getElementById(htmlEl)?.value.trim() || '';
@@ -2442,30 +2060,29 @@ async function loadAdminMsgs() {
   newMsgs.forEach(m => { _adminMsgsKnownIds.add(m.id); adminMsgsUnread++; });
   const badge = document.getElementById('adminMsgsBadge');
   if (badge) { badge.textContent = adminMsgsUnread; badge.style.display = adminMsgsUnread > 0 ? 'flex' : 'none'; }
-  if (document.getElementById('adminMsgsModal')?.style.display === 'flex') renderAdminMsgs(msgs);
+  if (document.getElementById('adminPanelModal')?.classList.contains('open') && _adminPanelActiveSection === 'messages') renderAdminMsgs(msgs);
 }
 function renderAdminMsgs(msgs) {
   const body = document.getElementById('adminMsgsBody'); if (!body) return;
-  if (!msgs.length) { body.innerHTML = '<div style="text-align:center;padding:30px;color:#aaa;font-size:13px;">אין הודעות</div>'; return; }
+  if (!msgs.length) { body.innerHTML = '<div class="ap-empty">אין הודעות</div>'; return; }
   body.innerHTML = msgs.map(m => {
     const isMine = m.email === me?.email;
-    return `<div style="background:${isMine ? '#eff6ff' : '#f9fafb'};border:1px solid ${isMine ? '#bfdbfe' : '#e5e7eb'};border-radius:12px;padding:10px 12px;margin-bottom:8px;">
-      <div style="font-size:11px;font-weight:800;color:${isMine ? '#1a56db' : '#374151'};margin-bottom:3px;">${esc(m.name || m.email)}</div>
-      <div style="font-size:13px;color:#111;line-height:1.5;">${esc(m.text)}</div>
-      <div style="font-size:10px;color:#9ca3af;margin-top:4px;">${fmtTime(m.ts)}</div>
+    return `<div style="background:${isMine ? '#eef1fd' : '#f8f9fc'};border:1px solid ${isMine ? '#d9deed' : '#eef0f5'};border-radius:12px;padding:10px 12px;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:800;color:${isMine ? '#4a55c7' : '#5b6072'};margin-bottom:3px;">${esc(m.name || m.email)}</div>
+      <div style="font-size:13px;color:#1f2430;line-height:1.5;">${esc(m.text)}</div>
+      <div style="font-size:10px;color:#a3a8b8;margin-top:4px;">${fmtTime(m.ts)}</div>
     </div>`;
   }).join('');
   body.scrollTop = body.scrollHeight;
 }
 async function openAdminMsgs() {
-  const modal = document.getElementById('adminMsgsModal'); if (!modal) return;
-  modal.style.display = 'flex'; adminMsgsUnread = 0;
+  adminMsgsUnread = 0;
   const badge = document.getElementById('adminMsgsBadge'); if (badge) badge.style.display = 'none';
   const d = await api('admin_msgs_get', {});
   if (d.status === 'ok') renderAdminMsgs(d.messages || []);
   const sendRow = document.getElementById('adminMsgsSendRow'); if (sendRow) sendRow.style.display = isSuperAdmin() ? 'flex' : 'none';
 }
-function closeAdminMsgs() { document.getElementById('adminMsgsModal').style.display = 'none'; }
+function closeAdminMsgs() { closeAdminPanel(); }
 async function sendAdminMsg() {
   if (!isSuperAdmin()) return;
   const inp = document.getElementById('adminMsgInput'); const text = (inp?.value || '').trim(); if (!text) return;
@@ -2475,25 +2092,25 @@ async function sendAdminMsg() {
 }
 
 /* ================= ניהול מורשי כתיבה ================= */
-async function openManageAdmins() { document.getElementById('manageAdminsModal').style.display = 'flex'; document.getElementById('adminMsgResult').style.display = 'none'; await renderAdminsList(); }
-function closeManageAdmins() { document.getElementById('manageAdminsModal').style.display = 'none'; }
+async function openManageAdmins() { document.getElementById('adminMsgResult').style.display = 'none'; await renderAdminsList(); }
+function closeManageAdmins() { closeAdminPanel(); }
 async function renderAdminsList() {
   const list = document.getElementById('adminsList'); if (!list) return;
-  list.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;"><i class="fas fa-spinner fa-spin"></i> טוען...</div>';
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:#a3a8b8;"><i class="fas fa-spinner fa-spin"></i> טוען...</div>';
   const d = await api('allowed_list', {});
   const users = d.list || [];
-  if (!users.length) { list.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;font-size:13px;">אין כותבים מורשים עדיין</div>'; return; }
+  if (!users.length) { list.innerHTML = '<div class="ap-empty">אין כותבים מורשים עדיין</div>'; return; }
   list.innerHTML = users.map(u => {
-    const pic = `<div style="width:36px;height:36px;border-radius:50%;background:#1a56db;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;">${esc((u.name || u.email || '?')[0].toUpperCase())}</div>`;
+    const pic = `<div style="width:36px;height:36px;border-radius:50%;background:#4a55c7;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${esc((u.name || u.email || '?')[0].toUpperCase())}</div>`;
     const isMe = u.email === me?.email?.toLowerCase();
-    return `<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:#f9fafb;border:1px solid #f0f0f0;">
+    return `<div class="ap-row-card">
       ${pic}
       <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:800;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.name || u.email)}${isMe ? ' <span style="font-size:10px;color:#aaa;">(אני)</span>' : ''}</div>
-        <div style="font-size:11px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.email)}</div>
-        <div style="font-size:10px;font-weight:800;color:#059669;margin-top:2px;">כותב מורשה</div>
+        <div style="font-size:13px;font-weight:800;color:#1f2430;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.name || u.email)}${isMe ? ' <span style="font-size:10px;color:#a3a8b8;">(אני)</span>' : ''}</div>
+        <div style="font-size:11px;color:#8a90a6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.email)}</div>
+        <div style="font-size:10px;font-weight:800;color:#5fa980;margin-top:2px;">כותב מורשה</div>
       </div>
-      ${isSuperAdmin() ? `<button onclick="removeAdmin('${escAttr(u.email)}')" title="הסר" style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:5px 10px;cursor:pointer;color:#dc2626;font-size:11px;font-weight:700;font-family:'Heebo',sans-serif;flex-shrink:0;"><i class="fas fa-trash" style="font-size:10px;"></i></button>` : ''}
+      ${isSuperAdmin() ? `<button onclick="removeAdmin('${escAttr(u.email)}')" title="הסר" style="background:#fdf1f1;border:1px solid #f6dede;border-radius:8px;padding:5px 10px;cursor:pointer;color:#c94b4b;font-size:11px;font-weight:700;font-family:'Heebo',sans-serif;flex-shrink:0;"><i class="fas fa-trash" style="font-size:10px;"></i></button>` : ''}
     </div>`;
   }).join('');
 }
@@ -2516,35 +2133,7 @@ async function removeAdmin(targetEmail) {
   if (d.status === 'ok') { await loadWritersMap(); await renderAdminsList(); showAdminMsg('הוסר בהצלחה', 'green'); }
   else { showAdminMsg('שגיאה', 'red'); }
 }
-function showAdminMsg(txt, color) { const el = document.getElementById('adminMsgResult'); if (!el) return; el.textContent = txt; el.style.color = color === 'green' ? '#16a34a' : '#dc2626'; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 3000); }
-
-/* ================= פאנל יוצרים (תצוגה בלבד) ================= */
-function renderCreatorsSidebar(writers) {
-  const listEl = document.getElementById('creatorsGlassList'); if (!listEl) return;
-  if (!writers || !writers.length) { listEl.innerHTML = '<div style="padding:18px 12px;text-align:center;font-size:12px;color:rgba(255,255,255,0.25);font-family:Heebo,sans-serif;">אין יוצרים עדיין</div>'; return; }
-  const palette = ['#818cf8', '#34d399', '#f472b6', '#fb923c', '#60a5fa', '#a78bfa', '#f87171'];
-  listEl.innerHTML = writers.map((creator, idx) => {
-    const name = creator.name || '?'; const initials = name.charAt(0).toUpperCase();
-    const color = palette[Math.abs(name.charCodeAt(0)) % palette.length];
-    return `<div class="cg-item" style="animation:cg-in ${0.12 + idx * 0.04}s ease both;cursor:default;">
-      <div class="cg-av-wrap"><div class="cg-av-ring"></div><div class="cg-av-inner" style="background:${color};">${initials}</div></div>
-      <div class="cg-info"><div class="cg-name">${esc(name)}</div><div class="cg-role">יוצר</div></div>
-    </div>`;
-  }).join('');
-}
-let _creatorsPanelOpen = false;
-function toggleCreatorsPanel() {
-  _creatorsPanelOpen = !_creatorsPanelOpen;
-  document.getElementById('creatorsPanel')?.classList.toggle('open', _creatorsPanelOpen);
-  document.querySelector('.creators-hdr')?.classList.toggle('open', _creatorsPanelOpen);
-  if (_creatorsPanelOpen) setTimeout(() => document.addEventListener('click', _closePanelOutside), 0);
-  else document.removeEventListener('click', _closePanelOutside);
-}
-function _closePanelOutside(e) {
-  const panel = document.getElementById('creatorsPanel'); const hdr = document.querySelector('.creators-hdr');
-  if (panel && !panel.contains(e.target) && hdr && !hdr.contains(e.target)) { _creatorsPanelOpen = false; panel.classList.remove('open'); hdr.classList.remove('open'); document.removeEventListener('click', _closePanelOutside); }
-}
-function closeCreatorsPanel() { _creatorsPanelOpen = false; document.getElementById('creatorsPanel')?.classList.remove('open'); document.querySelector('.creators-hdr')?.classList.remove('open'); document.removeEventListener('click', _closePanelOutside); }
+function showAdminMsg(txt, color) { const el = document.getElementById('adminMsgResult'); if (!el) return; el.textContent = txt; el.style.color = color === 'green' ? '#3f9a6e' : '#c94b4b'; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 3000); }
 
 /* ================= סטטיסטיקות ================= */
 async function pingSitePresence() { if (!me) return; await api('presence_ping', { email: me.email, name: me.name, picture: me.picture }, 'POST'); }
@@ -2556,7 +2145,6 @@ async function triggerStats() {
   }
 }
 async function openSiteStats() {
-  document.getElementById('siteStatsModal').style.display = 'flex';
   const d = await api('site_stats', {});
   if (d.status === 'ok') {
     document.getElementById('statOnline').innerText = d.online || '0';
@@ -2566,7 +2154,7 @@ async function openSiteStats() {
     document.getElementById('statPeak').innerText = d.peak || '0';
   }
 }
-function closeSiteStats() { document.getElementById('siteStatsModal').style.display = 'none'; }
+function closeSiteStats() { closeAdminPanel(); }
 
 /* ================= לייטבוקס, מצב כהה, התראות ================= */
 function closeLightbox() { document.getElementById('lightbox').classList.remove('show'); document.getElementById('lbImg').src = ''; }
