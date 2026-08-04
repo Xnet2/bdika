@@ -8,7 +8,7 @@
 <meta name="keywords" content="מזג האוויר">
 <meta name="google-site-verification" content="ZXEdDW4jzJU_cxuE1lL0tf76JJf3KZle2MIMjs4ua98" />
 
-<link rel="icon" type="image/png" href="https://i.ibb.co/KjBNwmPt/image.png">
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/6476/6476785.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;500;600;700;800&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -182,7 +182,7 @@ header{ background:#fff;border-bottom:1px solid rgba(0,0,0,.08); height:56px;pad
 .msg-meta-sender{font-size:11px;font-weight:700;color:#1a56db;background:#eff6ff;border:1px solid #bfdbfe;border-radius:5px;padding:0 5px;}
 .bubble{ background:#f3f4f6;direction:rtl; border-radius:18px 4px 18px 18px; padding:10px 14px 8px; display:inline-block;max-width:100%; box-shadow:0 1px 2px rgba(0,0,0,.10);}
 .bubble.is-red{background:#fff9f9;border-right:3px solid #e02020;}
-.bubble-text{font-size:19px;line-height:1.65;color:#1f2937;font-weight:400;white-space:pre-wrap;word-break:break-word;font-family:'Assistant','Heebo','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;}
+.bubble-text{font-size:19px;line-height:1.65;color:#111111;font-weight:400;white-space:pre-wrap;word-break:break-word;font-family:'Assistant','Heebo','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;}
 .bubble-text strong{font-weight:700;color:#1a1a1a;}
 .bubble-text em{font-style:italic;}
 .bubble-text a{color:#1a56db;text-decoration:underline;}
@@ -224,26 +224,25 @@ header{ background:#fff;border-bottom:1px solid rgba(0,0,0,.08); height:56px;pad
 .cmt-btn:hover{color:#1a56db;}
 .cmt-btn.has-cmt{color:#1a56db;}
 .link-btn{display:inline-flex;align-items:center;gap:3px;background:none;border:none;font-size:11px;color:#aaa;cursor:pointer;font-family:'Heebo',sans-serif;font-weight:700;padding:0;transition:color .12s;text-decoration:none;letter-spacing:.01em;}
-.link-btn:hover{color:#1a56db;text-decoration:underline;}
 .link-btn.copied{color:#16a34a;}
 
-/* Bubble wrapper for top actions */
+/* Bubble wrapper for top actions - חלונית עגולה אחת שמאחדת את כל הכפתורים */
 .bubble-wrap-outer{position:relative;display:inline-block;max-width:100%;margin-top:4px;}
-.bubble-top-actions{ position:absolute;top:-24px;left:2px; display:flex;align-items:center;gap:3px; opacity:0;pointer-events:none; transition:opacity .15s ease; z-index:10; direction:ltr;}
+.bubble-top-actions{ position:absolute;top:-30px;left:2px; display:flex;align-items:center;gap:1px; opacity:0;pointer-events:none; transition:opacity .15s ease; z-index:10; direction:ltr; background:rgba(255,255,255,.97); border:1px solid #e5e7eb; border-radius:999px; padding:3px; box-shadow:0 2px 8px rgba(0,0,0,.13);}
 .msg-row:hover .bubble-top-actions{ opacity:1;pointer-events:all; }
 @media (hover:none){ .bubble-top-actions{ opacity:1;pointer-events:all; } }
 .bubble-top-actions .link-btn,
-.bubble-top-actions .cmt-btn{ background:rgba(255,255,255,.93); border:1px solid #e5e7eb; border-radius:6px; padding:0 7px; height:22px; box-shadow:0 1px 4px rgba(0,0,0,.10); font-size:11px; color:#888; display:inline-flex;align-items:center;gap:3px; font-family:'Heebo',sans-serif;font-weight:600; cursor:pointer;text-decoration:none;}
+.bubble-top-actions .cmt-btn,
+.bubble-top-actions .msg-action-btn{ background:none; border:none; box-shadow:none; border-radius:50%; width:24px;height:24px;padding:0; font-size:11px; color:#888; display:inline-flex;align-items:center;justify-content:center; font-family:'Heebo',sans-serif;font-weight:600; cursor:pointer;text-decoration:none; transition:background .12s,color .12s;}
 .bubble-top-actions .link-btn:hover,
-.bubble-top-actions .cmt-btn:hover{color:#1a56db;border-color:#93c5fd;background:#fff;}
-.bubble-top-actions .cmt-btn.has-cmt{color:#1a56db;border-color:#bfdbfe;}
+.bubble-top-actions .cmt-btn:hover{color:#1a56db;background:#eff6ff;}
+.bubble-top-actions .cmt-btn.has-cmt{color:#1a56db;}
 
 /* Admin action buttons */
-.msg-action-btn{ background:rgba(255,255,255,.93);border:1px solid #e5e7eb;border-radius:6px; padding:0 7px;height:22px;box-shadow:0 1px 4px rgba(0,0,0,.10); display:inline-flex;align-items:center;gap:3px; font-size:11px;cursor:pointer;font-family:'Heebo',sans-serif; font-weight:600;color:#888;transition:color .12s,border-color .12s;}
-.msg-action-btn:hover{color:#dc2626;border-color:#fca5a5;}
-.msg-action-btn.quote:hover{color:#1a56db;border-color:#93c5fd;}
-.msg-action-btn.edit:hover{color:#059669;border-color:#6ee7b7;}
-.msg-action-btn.del:hover{color:#e02020;border-color:#fca5a5;}
+.msg-action-btn:hover{color:#dc2626;background:#fef2f2;}
+.msg-action-btn.quote:hover{color:#1a56db;background:#eff6ff;}
+.msg-action-btn.edit:hover{color:#059669;background:#ecfdf5;}
+.msg-action-btn.del:hover{color:#e02020;background:#fef2f2;}
 .msg-meta-edited{font-size:10px;color:#9ca3af;font-style:italic;font-weight:500;}
 
 /* Quote block */
@@ -542,9 +541,10 @@ body.dark .bubble-text { color: #d1d5db !important; }
 body.dark .bubble-headline { color: #f3f4f6 !important; }
 body.dark .rxn-chip { background: #2a2a40; border-color: #3a3a55; }
 body.dark .rxn-count { color: #9ca3af; }
+body.dark .bubble-top-actions { background: #1e1e30; border-color: #3a3a55; }
 body.dark .bubble-top-actions .link-btn,
-body.dark .bubble-top-actions .cmt-btn { background: #1e1e30; border-color: #3a3a55; color: #9ca3af; }
-body.dark .msg-action-btn { background: #1e1e30; border-color: #3a3a55; color: #9ca3af; }
+body.dark .bubble-top-actions .cmt-btn,
+body.dark .msg-action-btn { color: #9ca3af; }
 body.dark #adminComposeBar { background: #1a1a2e !important; border-color: #2a2a40 !important; }
 body.dark #composeEditor { background: #0f0f15 !important; border-color: #3a3a55 !important; color: #e5e7eb !important; }
 body.dark .compose-toolbar { border-color: #2a2a40; }
