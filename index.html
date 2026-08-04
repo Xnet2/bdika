@@ -1659,24 +1659,27 @@ async function applyLogin() {
 
   api('api_log_login', { email: me.email, name: me.name, picture: me.picture }, 'POST');
 
-  await loadWritersMap();
-  refreshUserMenu();
+  // מציגים מיד את מה שאפשר בלי לחכות לשרת - הרשאות הכתיבה כבר ידועות מ-auth_check
   applyWritePerm();
+  refreshUserMenu();
+  loadFeed();
+
+  // רשימת הכותבים (לשמות תצוגה + פאנל יוצרים) נטענת במקביל ולא חוסמת את הפיד
+  loadWritersMap().then(() => { refreshUserMenu(); applyWritePerm(); });
 
   if (isAdmin()) {
     document.getElementById('rightSidebar')?.classList.remove('show');
     document.getElementById('adminChatPanel')?.classList.add('show');
-    loadAdminChat(); setInterval(loadAdminChat, 2500); setInterval(pollChatTyping, 2500);
-    loadAdminMsgs(); setInterval(loadAdminMsgs, 5000);
+    loadAdminChat(); setInterval(loadAdminChat, 4000); setInterval(pollChatTyping, 4000);
+    loadAdminMsgs(); setInterval(loadAdminMsgs, 8000);
     pingChatPresence(); setInterval(pingChatPresence, 15000);
-    pollUpdateMode(); setInterval(pollUpdateMode, 5000);
+    pollUpdateMode(); setInterval(pollUpdateMode, 8000);
     document.getElementById('feedWrap').style.paddingBottom = '120px';
   }
 
-  loadFeed();
   setTimeout(loadAd, 3000); setInterval(loadAd, 60 * 60 * 1000);
   initDark(); initNotifications();
-  triggerStats(); setInterval(triggerStats, 10000);
+  triggerStats(); setInterval(triggerStats, 20000);
 }
 
 async function handleGoogle(resp) {
@@ -1995,23 +1998,30 @@ async function loadFeed() {
   oldestTs = items.length ? Math.min(...items.map(e => e.ts || Infinity)) : 0;
   lastTs = items.length ? Math.max(...items.map(e => e.ts || 0)) : 0;
 
+  // רינדור מיידי של הפיד בלי לחכות לסימון "נקרא" - חוסך סיבוב-הלוך-ושוב נוסף לפני שמשהו נראה על המסך
   const inner = document.getElementById('feedInner');
-  const lastReadD = me ? await api('get_last_read', { email: me.email, channel: CHANNEL }) : { ts: 0 };
-  const lastReadTs = lastReadD.ts || 0;
-  let unreadInjected = false, unreadCount = 0, html = '';
-
+  let html = '';
   items.forEach(e => {
-    if (lastReadTs > 0 && e.ts > lastReadTs) {
-      if (!unreadInjected) { html += `<div class="unread-sep" id="unreadMarker"><span>לא נקרא</span></div>`; unreadInjected = true; }
-      unreadCount++;
-    }
     html += buildMsg(e);
     if (e.reactions) rxnCache[e.id] = e.reactions;
   });
-
   inner.innerHTML = items.length ? html : '';
   document.getElementById('empty').style.display = items.length ? 'none' : 'block';
   items.forEach(e => { if (e.reactions) renderRxn(e.id, e.reactions); });
+  document.getElementById('feedWrap').scrollTop = 999999;
+
+  if (!me) return;
+  const lastReadD = await api('get_last_read', { email: me.email, channel: CHANNEL });
+  const lastReadTs = lastReadD.ts || 0;
+  let unreadCount = 0;
+  if (lastReadTs > 0) {
+    const firstUnread = items.find(e => e.ts > lastReadTs);
+    if (firstUnread) {
+      unreadCount = items.filter(e => e.ts > lastReadTs).length;
+      const el = document.querySelector(`.msg-row[data-id="${firstUnread.id}"]`);
+      if (el) el.insertAdjacentHTML('beforebegin', `<div class="unread-sep" id="unreadMarker"><span>לא נקרא</span></div>`);
+    }
+  }
 
   const marker = document.getElementById('unreadMarker');
   if (marker) {
@@ -2066,7 +2076,7 @@ async function pollAll() {
     items = items.filter(i => i.id !== id); knownIds.delete(id);
   });
 }
-setInterval(pollAll, 3000);
+setInterval(pollAll, 6000);
 
 document.getElementById('feedWrap')?.addEventListener('scroll', () => {
   const wrap = document.getElementById('feedWrap');
