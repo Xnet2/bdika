@@ -925,6 +925,81 @@ body, html { background: #fff !important; }
     margin-left: auto; /* דוחף הכל שמאלה ומשאיר מקום לפרסומות בעתיד */
 }
 
+/* ================= פאנל ניהול (מודרני) ================= */
+#adminPanelModal{
+  display:none; position:fixed; inset:0; z-index:850;
+  background:rgba(10,12,25,.65); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  align-items:center; justify-content:center; padding:20px;
+  animation:apFadeIn .25s ease-out;
+}
+#adminPanelModal.open{display:flex;}
+@keyframes apFadeIn{from{opacity:0}to{opacity:1}}
+.ap-box{
+  width:100%; max-width:720px; max-height:88vh; display:flex; flex-direction:column;
+  background:#12121d; border-radius:24px; overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06);
+  animation:apPop .3s cubic-bezier(.16,1,.3,1) both;
+  font-family:'Heebo',sans-serif; direction:rtl;
+}
+@keyframes apPop{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.ap-hdr{
+  position:relative; padding:26px 26px 22px; flex-shrink:0; overflow:hidden;
+  background:linear-gradient(135deg,#1a56db 0%,#6d28d9 55%,#db2777 100%);
+}
+.ap-hdr::before{
+  content:''; position:absolute; inset:0; opacity:.5;
+  background:radial-gradient(circle at 20% 20%, rgba(255,255,255,.25), transparent 45%),
+             radial-gradient(circle at 85% 80%, rgba(255,255,255,.18), transparent 40%);
+}
+.ap-hdr-top{position:relative; display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.ap-hdr-user{display:flex; align-items:center; gap:12px; min-width:0;}
+.ap-hdr-user img, .ap-hdr-avatar-fallback{
+  width:48px; height:48px; border-radius:14px; object-fit:cover; flex-shrink:0;
+  border:2px solid rgba(255,255,255,.5); box-shadow:0 4px 14px rgba(0,0,0,.25);
+}
+.ap-hdr-avatar-fallback{background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:18px;}
+.ap-hdr-name{font-size:17px; font-weight:900; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 4px rgba(0,0,0,.15);}
+.ap-hdr-role{
+  display:inline-flex; align-items:center; gap:5px; margin-top:4px; font-size:11px; font-weight:800;
+  color:#fff; background:rgba(255,255,255,.2); padding:3px 9px; border-radius:20px; backdrop-filter:blur(4px);
+}
+.ap-hdr-close{
+  background:rgba(255,255,255,.16); border:none; color:#fff; width:34px; height:34px; border-radius:11px;
+  cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:background .15s, transform .15s;
+}
+.ap-hdr-close:hover{background:rgba(255,255,255,.3); transform:rotate(90deg);}
+.ap-hdr-title{position:relative; margin-top:18px; font-size:21px; font-weight:900; color:#fff; display:flex; align-items:center; gap:9px;}
+.ap-hdr-sub{position:relative; margin-top:4px; font-size:12.5px; color:rgba(255,255,255,.85); font-weight:600;}
+
+.ap-body{flex:1; overflow-y:auto; padding:22px 22px 26px; background:#12121d;}
+.ap-section-lbl{font-size:11px; font-weight:800; color:#6b7280; text-transform:uppercase; letter-spacing:.6px; margin:0 2px 12px; display:flex; align-items:center; gap:8px;}
+.ap-section-lbl::after{content:''; flex:1; height:1px; background:linear-gradient(90deg, rgba(255,255,255,.12), transparent);}
+.ap-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px;}
+@media(max-width:520px){.ap-grid{grid-template-columns:1fr;}}
+.ap-card{
+  position:relative; overflow:hidden; text-align:right; cursor:pointer;
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:16px;
+  padding:16px; display:flex; align-items:flex-start; gap:13px;
+  transition:transform .18s cubic-bezier(.16,1,.3,1), background .18s, border-color .18s, box-shadow .18s;
+  font-family:'Heebo',sans-serif;
+}
+.ap-card:hover{
+  transform:translateY(-3px); background:rgba(255,255,255,.075); border-color:rgba(255,255,255,.18);
+  box-shadow:0 12px 28px rgba(0,0,0,.3);
+}
+.ap-card:active{transform:translateY(-1px) scale(.99);}
+.ap-card-icon{
+  width:42px; height:42px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:16px; color:#fff; box-shadow:0 6px 16px -4px rgba(0,0,0,.5);
+}
+.ap-card-txt{min-width:0; flex:1;}
+.ap-card-title{font-size:14px; font-weight:800; color:#f3f4f6; margin-bottom:3px;}
+.ap-card-desc{font-size:11.5px; color:#9296a8; font-weight:500; line-height:1.5;}
+.ap-card-arrow{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#4b5060; font-size:12px; transition:transform .18s, color .18s;}
+.ap-card:hover .ap-card-arrow{transform:translateY(-50%) translateX(-3px); color:#9296a8;}
+body.dark #adminPanelModal.open{background:rgba(0,0,0,.75);}
+
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -1428,6 +1503,26 @@ body, html { background: #fff !important; }
   </div>
 </div>
 
+<div id="adminPanelModal" onclick="if(event.target===this)closeAdminPanel()">
+  <div class="ap-box" onclick="event.stopPropagation()">
+    <div class="ap-hdr">
+      <div class="ap-hdr-top">
+        <div class="ap-hdr-user">
+          <div id="apHdrAvatarWrap"></div>
+          <div style="min-width:0;">
+            <div class="ap-hdr-name" id="apHdrName">-</div>
+            <div class="ap-hdr-role" id="apHdrRole"><i class="fas fa-crown" style="font-size:9px;"></i> <span></span></div>
+          </div>
+        </div>
+        <button class="ap-hdr-close" onclick="closeAdminPanel()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="ap-hdr-title"><i class="fas fa-shield-halved"></i> פאנל ניהול</div>
+      <div class="ap-hdr-sub">כל כלי הניהול והצוות במקום אחד</div>
+    </div>
+    <div class="ap-body" id="adminPanelBody"></div>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    מזג האוויר — לוגיקת אתר (מותאם לבק-אנד Google Apps Script)
@@ -1633,18 +1728,8 @@ function refreshUserMenu() {
     : `<div style="width:34px;height:34px;border-radius:50%;background:#1a56db;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.1)">${esc(me.name[0].toUpperCase())}</div>`;
   let adminMenuHtml = '';
   if (isAdmin()) {
-    adminMenuHtml += `<div style="border-top:1px solid #e5e7eb; margin-top:8px; padding-top:8px;">
-      <div style="padding:0 14px 6px;font-size:11px;font-weight:800;color:#1a56db;text-transform:uppercase;letter-spacing:0.5px;">ניהול ואזור צוות</div>
-      <button onclick="openLeaderboard()" style="width:100%;padding:8px 14px;text-align:right;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;gap:10px;"><i class="fas fa-chart-bar" style="color:#ea580c;width:16px;"></i> דירוג יוצרים</button>
-      <button onclick="openSiteStats()" style="width:100%;padding:8px 14px;text-align:right;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;gap:10px;"><i class="fas fa-chart-line" style="color:#0891b2;width:16px;"></i> סטטיסטיקות קהילה</button>`;
-  }
-  if (role === 'super') {
-    adminMenuHtml += `
-      <button onclick="openReportsModal()" style="width:100%;padding:8px 14px;text-align:right;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;gap:10px;"><i class="fas fa-flag" style="color:#dc2626;width:16px;"></i> דיווחי משתמשים</button>
-      <button onclick="openManageAdmins()" style="width:100%;padding:8px 14px;text-align:right;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;gap:10px;"><i class="fas fa-user-cog" style="color:#1a56db;width:16px;"></i> מורשי כתיבה</button>
-      <button onclick="openSiteSettings()" style="width:100%;padding:8px 14px;text-align:right;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;gap:10px;"><i class="fas fa-tools" style="color:#7c3aed;width:16px;"></i> חסימת משתמשים</button>
-      <button onclick="openAdPanel()" style="width:100%;padding:8px 14px;text-align:right;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;gap:10px;"><i class="fas fa-ad" style="color:#ca8a04;width:16px;"></i> פרסומות</button>
-      <button onclick="openAdminMsgs()" style="width:100%;padding:8px 14px;text-align:right;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;gap:10px;"><i class="fas fa-bullhorn" style="color:#e02020;width:16px;"></i> הודעות לצוות</button>
+    adminMenuHtml += `<div style="border-top:1px solid #e5e7eb; margin-top:8px; padding:8px 10px 2px;">
+      <button onclick="openAdminPanel()" style="width:100%;padding:11px 14px;text-align:right;background:linear-gradient(135deg,#1a56db,#6d28d9);border:none;border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:800;color:#fff;display:flex;align-items:center;gap:10px;box-shadow:0 4px 14px -4px rgba(26,86,219,.6);transition:transform .15s,box-shadow .15s;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 18px -4px rgba(26,86,219,.7)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 14px -4px rgba(26,86,219,.6)'"><i class="fas fa-shield-halved" style="width:16px;"></i> פאנל ניהול</button>
     </div>`;
   }
   const menu = document.getElementById('userMenu'); if (!menu) return;
@@ -1662,6 +1747,50 @@ function refreshUserMenu() {
       <button onclick="doLogout()" style="width:100%;padding:10px 16px;text-align:right;background:none;border:none;cursor:pointer;font-size:13px;font-weight:700;color:#dc2626;display:flex;align-items:center;gap:10px;"><i class="fas fa-sign-out-alt" style="width:16px;"></i> התנתק</button>
     </div>`;
 }
+
+/* ================= פאנל ניהול (מודרני) ================= */
+function openAdminPanel() {
+  if (!me || !isAdmin()) return;
+  document.getElementById('userMenu') && (document.getElementById('userMenu').style.display = 'none');
+  const role = getRole();
+
+  const avWrap = document.getElementById('apHdrAvatarWrap');
+  avWrap.innerHTML = me.picture
+    ? `<img src="${escAttr(me.picture)}">`
+    : `<div class="ap-hdr-avatar-fallback">${esc(me.name[0].toUpperCase())}</div>`;
+  document.getElementById('apHdrName').innerText = me.name;
+  document.getElementById('apHdrRole').querySelector('span').innerText = role === 'super' ? 'מנהל ראשי' : 'כותב מורשה';
+
+  const teamCards = [
+    { icon: 'fa-chart-bar', color: '#ea580c', title: 'דירוג יוצרים', desc: 'מי הכי פעיל ומוביל בקהילה', fn: 'openLeaderboard()' },
+    { icon: 'fa-chart-line', color: '#0891b2', title: 'סטטיסטיקות קהילה', desc: 'נתוני גלישה ופעילות באתר', fn: 'openSiteStats()' },
+  ];
+  const superCards = [
+    { icon: 'fa-flag', color: '#dc2626', title: 'דיווחי משתמשים', desc: 'טיפול בתכנים שדווחו', fn: 'openReportsModal()' },
+    { icon: 'fa-user-cog', color: '#1a56db', title: 'מורשי כתיבה', desc: 'ניהול צוות ויוצרי תוכן', fn: 'openManageAdmins()' },
+    { icon: 'fa-tools', color: '#7c3aed', title: 'חסימת משתמשים', desc: 'הגבלת גישה למשתמשים', fn: 'openSiteSettings()' },
+    { icon: 'fa-ad', color: '#ca8a04', title: 'פרסומות', desc: 'ניהול באנרים ומודעות באתר', fn: 'openAdPanel()' },
+    { icon: 'fa-bullhorn', color: '#e02020', title: 'הודעות לצוות', desc: 'שליחת עדכונים לכלל המנהלים', fn: 'openAdminMsgs()' },
+  ];
+
+  function cardHtml(c) {
+    return `<div class="ap-card" onclick="closeAdminPanel();${c.fn}">
+      <div class="ap-card-icon" style="background:${c.color};"><i class="fas ${c.icon}"></i></div>
+      <div class="ap-card-txt"><div class="ap-card-title">${c.title}</div><div class="ap-card-desc">${c.desc}</div></div>
+      <i class="fas fa-chevron-left ap-card-arrow"></i>
+    </div>`;
+  }
+
+  let html = `<div class="ap-section-lbl"><i class="fas fa-layer-group" style="font-size:10px;"></i> כלי צוות</div>
+    <div class="ap-grid">${teamCards.map(cardHtml).join('')}</div>`;
+  if (role === 'super') {
+    html += `<div class="ap-section-lbl"><i class="fas fa-crown" style="font-size:10px;"></i> ניהול ראשי</div>
+      <div class="ap-grid">${superCards.map(cardHtml).join('')}</div>`;
+  }
+  document.getElementById('adminPanelBody').innerHTML = html;
+  document.getElementById('adminPanelModal').classList.add('open');
+}
+function closeAdminPanel() { document.getElementById('adminPanelModal').classList.remove('open'); }
 
 async function loadWritersMap() {
   const d = await api('allowed_list', {});
