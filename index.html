@@ -182,7 +182,7 @@ header{ background:#fff;border-bottom:1px solid rgba(0,0,0,.08); height:56px;pad
 .msg-meta-sender{font-size:11px;font-weight:700;color:#1a56db;background:#eff6ff;border:1px solid #bfdbfe;border-radius:5px;padding:0 5px;}
 .bubble{ background:#f3f4f6;direction:rtl; border-radius:18px 4px 18px 18px; padding:10px 14px 8px; display:inline-block;max-width:100%; box-shadow:0 1px 2px rgba(0,0,0,.10);}
 .bubble.is-red{background:#fff9f9;border-right:3px solid #e02020;}
-.bubble-text{font-size:19px;line-height:1.65;color:#4b5563;font-weight:400;white-space:pre-wrap;word-break:break-word;font-family:'Assistant','Heebo','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;}
+.bubble-text{font-size:19px;line-height:1.65;color:#1f2937;font-weight:400;white-space:pre-wrap;word-break:break-word;font-family:'Assistant','Heebo','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;}
 .bubble-text strong{font-weight:700;color:#1a1a1a;}
 .bubble-text em{font-style:italic;}
 .bubble-text a{color:#1a56db;text-decoration:underline;}
@@ -228,8 +228,10 @@ header{ background:#fff;border-bottom:1px solid rgba(0,0,0,.08); height:56px;pad
 .link-btn.copied{color:#16a34a;}
 
 /* Bubble wrapper for top actions */
-.bubble-wrap-outer{position:relative;display:inline-block;max-width:100%;margin-top:16px;}
-.bubble-top-actions{ position:absolute;top:-24px;left:2px; display:flex;align-items:center;gap:3px; opacity:1;pointer-events:all; z-index:10; direction:ltr;}
+.bubble-wrap-outer{position:relative;display:inline-block;max-width:100%;margin-top:4px;}
+.bubble-top-actions{ position:absolute;top:-24px;left:2px; display:flex;align-items:center;gap:3px; opacity:0;pointer-events:none; transition:opacity .15s ease; z-index:10; direction:ltr;}
+.msg-row:hover .bubble-top-actions{ opacity:1;pointer-events:all; }
+@media (hover:none){ .bubble-top-actions{ opacity:1;pointer-events:all; } }
 .bubble-top-actions .link-btn,
 .bubble-top-actions .cmt-btn{ background:rgba(255,255,255,.93); border:1px solid #e5e7eb; border-radius:6px; padding:0 7px; height:22px; box-shadow:0 1px 4px rgba(0,0,0,.10); font-size:11px; color:#888; display:inline-flex;align-items:center;gap:3px; font-family:'Heebo',sans-serif;font-weight:600; cursor:pointer;text-decoration:none;}
 .bubble-top-actions .link-btn:hover,
