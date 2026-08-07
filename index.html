@@ -1,1 +1,3653 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1"/>
+<title>שאגת הארי</title>
+<link rel="icon" type="image/png" href="https://i.ibb.co/pBvLbsG3/ed89a1453931.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;500;600;700;800&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;}
+body{height:100%;font-family:'Heebo',sans-serif;-webkit-font-smoothing:antialiased;background:#eae9e4;display:flex;flex-direction:row-reverse;}
 
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:#eae9e4;display:flex;align-items:center;justify-content:center;z-index:1000;}
+.login-card{background:#fff;border-radius:18px;padding:38px 32px;text-align:center;box-shadow:0 4px 32px rgba(0,0,0,.12);max-width:320px;width:90%;}
+.login-logo-img{width:90px;height:90px;border-radius:16px;margin:0 auto 14px;display:block;object-fit:contain;}
+.login-title{font-size:20px;font-weight:900;color:#111;margin-bottom:4px;}
+.login-sub{font-size:13px;color:#888;margin-bottom:24px;}
+
+/* APP */
+#app{flex:1;min-width:0;height:100%;display:none;flex-direction:column;}
+
+/* ══ AD / CHAT SIDEBAR ══ */
+#rightSidebar{
+  width:320px;min-width:320px;
+  background:#fff;
+  border-left:1px solid rgba(0,0,0,.08);
+  flex-shrink:0;
+  position:sticky;top:56px;height:calc(100vh - 56px);
+  flex-direction:column;
+  overflow:hidden;
+  display:none;
+}
+#rightSidebar.show{display:flex;}
+@media(max-width:900px){#rightSidebar{display:none!important;}}
+
+/* ── Admin Chat Panel — fills entire sidebar ── */
+#adminChatPanel{
+  flex:1;min-height:0;
+  display:none;
+  flex-direction:column;
+  overflow:hidden;
+}
+#adminChatPanel.show{display:flex;}
+
+/* Ad block — separate fixed element, NOT inside sidebar when chat is active */
+#adSidebarBlock{flex-shrink:0;}
+#adSidebarBlock a{display:block;width:100%;}
+#adSidebarBlock img{width:100%;height:auto;display:block;}
+
+/* Chat panel minimized state */
+#adminChatPanel.minimized #chatMessages,
+#adminChatPanel.minimized #chatInputRow,
+#adminChatPanel.minimized #chatTypingBar{display:none!important;}
+#adminChatPanel.minimized{flex:none;}
+
+.chat-panel-hdr{
+  padding:10px 14px;background:#fff;
+  border-bottom:1px solid #e5e7eb;
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+}
+.chat-panel-title{font-size:13px;font-weight:800;color:#111;flex:1;}
+.chat-panel-presence{font-size:11px;color:#16a34a;font-weight:600;display:flex;align-items:center;gap:4px;}
+.chat-pres-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:dp 1.6s ease-in-out infinite;}
+@keyframes dp{0%,100%{opacity:1}50%{opacity:.3}}
+.chat-minimize-btn{background:none;border:none;cursor:pointer;color:#9ca3af;font-size:13px;padding:3px 7px;border-radius:6px;transition:background .1s,color .1s;}
+.chat-minimize-btn:hover{background:#f3f4f6;color:#374151;}
+
+#chatMessages{
+  flex:1;overflow-y:auto;padding:10px 12px;
+  display:flex;flex-direction:column;gap:2px;
+  background:url('https://i.postimg.cc/ZqSsf0BM/Whats-App-Wallpaper-39-(1).jpg') repeat center/auto;
+  scrollbar-width:thin;scrollbar-color:#d1d5db transparent;
+}
+#chatMessages::-webkit-scrollbar{width:3px;}
+#chatMessages::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:99px;}
+.chat-empty-msg{text-align:center;padding:24px 16px;color:#777;font-size:12px;font-weight:600;background:rgba(255,255,255,.75);border-radius:12px;margin:auto;}
+
+/* Chat groups */
+.chat-grp{display:flex;align-items:flex-end;gap:7px;margin-bottom:1px;}
+.chat-grp.me{flex-direction:row-reverse;}
+.chat-grp.gap{margin-top:8px;}
+.chat-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;align-self:flex-start;margin-top:2px;overflow:hidden;}
+.chat-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.chat-bubs{display:flex;flex-direction:column;gap:2px;max-width:210px;}
+.chat-bubs.me{align-items:flex-end;}
+.chat-bubs.other{align-items:flex-start;}
+.chat-sender{font-size:11px;font-weight:700;margin-bottom:2px;padding:0 3px;}
+.chat-bub{
+  padding:6px 10px;font-size:13px;line-height:1.5;word-break:break-word;
+  border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.1);cursor:default;
+  animation:bubIn .18s ease;
+}
+@keyframes bubIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.chat-bub.me{background:rgba(212,252,196,.93);color:#1a3a1a;border-radius:14px 14px 4px 14px;}
+.chat-bub.other{background:rgba(255,255,255,.93);color:#1f2937;border-radius:14px 14px 14px 4px;}
+.chat-bub a{color:#1a56db;text-decoration:underline;word-break:break-all;}
+.chat-bub strong{font-weight:800;}
+.chat-bub em{font-style:italic;}
+.chat-time{font-size:9px;opacity:.45;margin-right:5px;white-space:nowrap;vertical-align:bottom;}
+.chat-date-sep{display:flex;align-items:center;gap:8px;margin:8px 0 4px;font-size:10px;font-weight:700;color:#777;}
+.chat-date-sep::before,.chat-date-sep::after{content:'';flex:1;height:1px;background:rgba(0,0,0,.1);}
+.chat-date-sep span{background:rgba(255,255,255,.8);padding:1px 8px;border-radius:99px;}
+
+/* Typing bar */
+#chatTypingBar{padding:5px 14px;font-size:11px;color:#666;font-style:italic;background:rgba(255,255,255,.9);border-top:1px solid #e5e7eb;flex-shrink:0;display:none;}
+
+/* Chat context menu */
+#chatCtxMenu{position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:600;display:none;overflow:hidden;min-width:130px;animation:pickerPop .12s ease-out;}
+#chatCtxMenu.show{display:block;}
+.ctx-item{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;color:#374151;transition:background .1s;font-family:'Heebo',sans-serif;border-bottom:1px solid #f9fafb;}
+.ctx-item:last-child{border-bottom:none;}
+.ctx-item:hover{background:#f3f4f6;}
+.ctx-item.danger{color:#dc2626;}
+.ctx-item.danger:hover{background:#fef2f2;}
+.ctx-item i{font-size:10px;width:14px;}
+
+/* Chat input row */
+#chatInputRow{padding:8px 10px;border-top:1px solid #e5e7eb;display:flex;gap:7px;align-items:flex-end;flex-shrink:0;background:#fff;position:relative;}
+#mentionDropdown{position:absolute;bottom:calc(100% + 4px);right:10px;left:10px;background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;box-shadow:0 -4px 16px rgba(0,0,0,.12);z-index:300;overflow:hidden;display:none;direction:rtl;}
+#mentionDropdown.show{display:block;}
+.mention-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:600;color:#374151;font-family:'Heebo',sans-serif;transition:background .1s;border-bottom:1px solid #f3f4f6;}
+.mention-item:last-child{border-bottom:none;}
+.mention-item:hover,.mention-item.active{background:#eff6ff;color:#1a56db;}
+.mention-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden;}
+.mention-av img{width:100%;height:100%;object-fit:cover;}
+.chat-inp{flex:1;border:1.5px solid #e5e7eb;border-radius:18px;padding:7px 12px;font-size:13px;font-family:'Heebo',sans-serif;resize:none;outline:none;max-height:70px;line-height:1.4;direction:rtl;background:#f9fafb;transition:border-color .15s,background .15s;}
+.chat-inp:focus{border-color:#93c5fd;background:#fff;}
+.chat-send-btn{width:34px;height:34px;background:#1a56db;color:#fff;border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s,transform .1s;}
+.chat-send-btn:hover{background:#1d4ed8;transform:scale(1.05);}
+
+/* HEADER */
+header{
+  background:#fff;border-bottom:1px solid rgba(0,0,0,.08);
+  height:56px;padding:0 14px;
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;position:fixed;top:0;left:0;right:0;z-index:100;
+  overflow:visible;
+}
+#app{padding-top:56px;}
+.hdr-avatar{width:38px;height:38px;border-radius:10px;object-fit:contain;flex-shrink:0;}
+.hdr-info{flex:1;min-width:0;}
+.hdr-name{font-size:15px;font-weight:800;color:#111;line-height:1.2;}
+.hdr-status{font-size:12px;color:#4caf7d;font-weight:600;display:flex;align-items:center;gap:4px;}
+.hdr-dot{width:5px;height:5px;border-radius:50%;background:#4caf7d;animation:dp 1.6s ease-in-out infinite;}
+.hdr-user{display:flex;align-items:center;gap:4px;}
+.hdr-user img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid #eee;}
+
+#adminBadge{
+  display:none;align-items:center;gap:4px;
+  background:#f0f4ff;border:1px solid #c7d7fa;
+  border-radius:8px;padding:2px 7px;
+  font-size:11px;font-weight:700;color:#1a56db;white-space:nowrap;
+}
+#adminBadge.show{display:inline-flex;}
+#adminBadge i{font-size:10px;opacity:.7;}
+
+/* FEED */
+#feedWrap{flex:1;overflow-y:auto;padding:10px 0 24px;scrollbar-width:none;}
+#feedWrap::-webkit-scrollbar{display:none;}
+#feedInner{max-width:780px;margin:0 60px 0 auto;padding:0 10px 0 48px;display:flex;flex-direction:column;gap:18px;}
+@media(max-width:600px){
+  #feedInner{margin:0;padding:0 8px;}
+  .bubble{min-width:0;}
+}
+
+/* MESSAGE ROW */
+.msg-row{
+  display:flex;direction:rtl;
+  align-items:flex-start;gap:8px;
+  padding:2px 0;
+  animation:mi .3s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes mi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg-av{width:36px;height:36px;border-radius:0;object-fit:contain;flex-shrink:0;align-self:flex-start;margin-top:17px;background:transparent;}
+.msg-col{display:flex;flex-direction:column;gap:3px;min-width:0;align-items:flex-start;position:relative;}
+.msg-meta{direction:rtl;display:flex;align-items:baseline;gap:6px;padding-right:4px;}
+.msg-meta-name{font-size:12px;font-weight:700;color:#666;}
+.msg-meta-time{font-size:11px;font-weight:500;color:#aaa;}
+.msg-meta-sender{font-size:11px;font-weight:700;color:#1a56db;background:#eff6ff;border:1px solid #bfdbfe;border-radius:5px;padding:0 5px;}
+.bubble{
+  background:#fff;direction:rtl;
+  border-radius:18px 4px 18px 18px;
+  padding:10px 14px 8px;
+  display:inline-block;max-width:100%;
+  box-shadow:0 1px 2px rgba(0,0,0,.10);
+}
+.bubble.is-red{background:#fff9f9;border-right:3px solid #e02020;}
+.bubble-text{font-size:19px;line-height:1.65;color:#4b5563;font-weight:400;white-space:pre-wrap;word-break:break-word;font-family:'Assistant','Heebo','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;}
+.bubble-text strong{font-weight:700;color:#1a1a1a;}
+.bubble-text em{font-style:italic;}
+.bubble-text a{color:#1a56db;text-decoration:underline;}
+.bubble-headline{font-size:19px;font-weight:700;color:#1f2937;line-height:1.5;margin-bottom:4px;font-family:'Assistant','Heebo','Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;}
+.bubble-img{margin-top:9px;border-radius:12px;overflow:hidden;display:block;}
+.bubble-img img{width:100%;display:block;max-height:310px;height:auto;object-fit:contain;object-position:top;}
+.bubble-vid{margin-top:9px;}
+.bubble-vid video{width:100%;border-radius:12px;background:#000;}
+.bubble-vid video.portrait{width:auto;max-width:100%;max-height:480px;display:block;margin:0 auto;}
+.bubble-vid iframe{max-width:100%;border-radius:12px;}
+.vid-btn{display:inline-flex;align-items:center;gap:6px;background:#1a56db;color:#fff;padding:7px 15px;border-radius:99px;font-size:13px;font-weight:700;text-decoration:none;}
+.bubble-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+.bubble-divider{border:none;border-top:1.5px solid #e5e7eb;margin:10px 0;width:100%;}
+.lnk-btn{display:inline-flex;align-items:center;gap:5px;background:#f3f4f6;border-radius:99px;padding:6px 13px;font-size:13px;font-weight:600;color:#374151;text-decoration:none;border:none;}
+.bubble-foot{display:flex;align-items:center;gap:5px;margin-top:2px;flex-wrap:wrap;padding-right:10px;}
+
+/* REACTIONS */
+.rxn-row{display:contents;}
+.rxn-chip{
+  display:inline-flex;align-items:center;justify-content:center;gap:3px;
+  background:#f3f4f6;border:1px solid #e5e7eb;
+  border-radius:8px;padding:3px 7px;height:26px;
+  cursor:pointer;transition:background .12s,border-color .12s,transform .1s;
+  user-select:none;line-height:1;
+}
+.rxn-chip:hover{background:#e5e7eb;border-color:#9ca3af;}
+.rxn-chip.mine{background:#eff6ff;border-color:#3b82f6;box-shadow:0 0 0 1.5px #bfdbfe;}
+.rxn-emoji{font-size:15px;line-height:1;font-family:'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;}
+.rxn-count{font-size:11px;font-weight:700;color:#6b7280;font-family:'Heebo',sans-serif;}
+.rxn-chip.mine .rxn-count{color:#1a56db;}
+.rxn-add-btn{
+  background:none;border:none;cursor:pointer;padding:1px;border-radius:6px;line-height:0;
+  display:inline-flex;align-items:center;color:#ccc;
+  transition:color .12s,background .12s,transform .12s;height:22px;width:22px;justify-content:center;
+}
+.rxn-add-btn:hover{color:#666;background:#f0f0f0;transform:scale(1.12);}
+.rxn-add-btn svg{width:14px;height:14px;display:block;}
+.rxn-add-btn.maxed{opacity:0.3;cursor:default;pointer-events:none;}
+.cmt-btn{display:inline-flex;align-items:center;gap:4px;background:none;border:none;font-size:12px;color:#aaa;cursor:pointer;font-family:'Heebo',sans-serif;font-weight:600;padding:0;transition:color .12s;}
+.cmt-btn:hover{color:#1a56db;}
+.cmt-btn.has-cmt{color:#1a56db;}
+.link-btn{display:inline-flex;align-items:center;gap:3px;background:none;border:none;font-size:11px;color:#aaa;cursor:pointer;font-family:'Heebo',sans-serif;font-weight:700;padding:0;transition:color .12s;text-decoration:none;letter-spacing:.01em;}
+.link-btn:hover{color:#1a56db;text-decoration:underline;}
+.link-btn.copied{color:#16a34a;}
+
+/* Bubble wrapper for top actions */
+.bubble-wrap-outer{position:relative;display:inline-block;max-width:100%;}
+.bubble-top-actions{
+  position:absolute;top:-24px;left:2px;
+  display:flex;align-items:center;gap:3px;
+  opacity:1;pointer-events:all;
+  z-index:10;
+  direction:ltr;
+}
+.bubble-top-actions .link-btn,
+.bubble-top-actions .cmt-btn{
+  background:rgba(255,255,255,.93);
+  border:1px solid #e5e7eb;
+  border-radius:6px;
+  padding:0 7px;
+  height:22px;
+  box-shadow:0 1px 4px rgba(0,0,0,.10);
+  font-size:11px;
+  color:#888;
+  display:inline-flex;align-items:center;gap:3px;
+  font-family:'Heebo',sans-serif;font-weight:600;
+  cursor:pointer;text-decoration:none;
+}
+.bubble-top-actions .link-btn:hover,
+.bubble-top-actions .cmt-btn:hover{color:#1a56db;border-color:#93c5fd;background:#fff;}
+.bubble-top-actions .cmt-btn.has-cmt{color:#1a56db;border-color:#bfdbfe;}
+
+/* Admin action buttons — now in bubble-top-actions, always visible */
+.msg-action-btn{
+  background:rgba(255,255,255,.93);border:1px solid #e5e7eb;border-radius:6px;
+  padding:0 7px;height:22px;box-shadow:0 1px 4px rgba(0,0,0,.10);
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:11px;cursor:pointer;font-family:'Heebo',sans-serif;
+  font-weight:600;color:#888;transition:color .12s,border-color .12s;
+}
+.msg-action-btn.quote:hover{color:#1a56db;border-color:#93c5fd;}
+.msg-action-btn.edit:hover{color:#059669;border-color:#6ee7b7;}
+.msg-action-btn.del:hover{color:#e02020;border-color:#fca5a5;}
+.msg-meta-edited{font-size:10px;color:#9ca3af;font-style:italic;font-weight:500;}
+/* edit modal */
+
+
+/* Quote block displayed inside feed bubble */
+.quote-block{
+  display:flex;align-items:flex-start;gap:6px;
+  background:#f3f4f6;border-radius:8px;
+  padding:7px 10px;margin-bottom:8px;
+  cursor:pointer;transition:background .12s;
+  border-right:3px solid #9ca3af;
+}
+.quote-block:hover{background:#e5e7eb;}
+.quote-block i{margin-top:1px;flex-shrink:0;}
+.quote-block-text{
+  font-size:13px;color:#6b7280;font-style:italic;
+  line-height:1.5;flex:1;
+}
+
+/* EMOJI PICKER */
+#emojiPicker{
+  position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:8px;
+  box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:600;display:none;
+  grid-template-columns:repeat(6,28px);gap:3px;
+  width:fit-content;
+  animation:pickerPop .14s ease-out;
+}
+@keyframes pickerPop{from{opacity:0;transform:scale(.95) translateY(4px)}to{opacity:1;transform:scale(1) translateY(0)}}
+#emojiPicker.show{display:grid;}
+
+
+.emp-note{font-size:10px;color:#aaa;font-weight:600;}
+.ep-btn{background:none;border:none;font-size:17px;cursor:pointer;padding:1px;border-radius:6px;line-height:1;flex-shrink:0;font-family:'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;transition:background .1s;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;}
+.ep-btn:hover{background:#f0f0f0;}
+
+/* COMMENTS PANEL */
+#cpOverlay{display:none;}
+#commentsPanel{position:fixed;top:56px;left:0;right:auto;width:310px;max-width:100vw;height:calc(100% - 56px);background:#fff;box-shadow:4px 0 24px rgba(0,0,0,.12);z-index:300;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .3s cubic-bezier(.16,1,.3,1);}
+#commentsPanel.open{transform:translateX(0);}
+.cp-hdr{padding:14px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.cp-title{font-size:15px;font-weight:800;color:#111;}
+.cp-close{background:none;border:none;font-size:17px;cursor:pointer;color:#aaa;padding:4px;border-radius:8px;}
+.cp-close:hover{background:#f3f4f6;}
+.cp-body{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
+.cp-spinner{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;color:#bbb;font-size:12px;font-weight:600;padding:30px 0;}
+.cp-spinner-ring{width:28px;height:28px;border-radius:50%;border:2.5px solid #e5e7eb;border-top-color:#1a56db;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ci{display:flex;gap:8px;animation:cian .22s ease;}
+@keyframes cian{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.ci-av{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;align-self:flex-start;}
+.ci-av-i{width:30px;height:30px;border-radius:50%;background:#1a56db;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-start;}
+.ci-bubble{background:#f3f4f6;border-radius:4px 12px 12px 12px;padding:8px 12px;flex:1;position:relative;direction:rtl;}
+.ci-text{font-size:13px;line-height:1.6;color:#374151;word-break:break-word;}
+.ci-time{font-size:10px;color:#aaa;margin-top:3px;}
+.ci-del{position:absolute;top:6px;left:8px;background:none;border:none;font-size:11px;color:#ccc;cursor:pointer;opacity:0;transition:opacity .12s;}
+.ci-bubble:hover .ci-del{opacity:1;}
+.no-cmt{text-align:center;color:#aaa;font-size:13px;padding:30px 0;}
+.cp-inp-row{padding:10px 12px;border-top:1px solid #f0f0f0;display:flex;gap:8px;align-items:flex-end;flex-shrink:0;}
+.cp-inp{flex:1;border:1.5px solid #e5e7eb;border-radius:12px;padding:8px 12px;font-size:14px;font-family:'Heebo',sans-serif;resize:none;outline:none;max-height:80px;line-height:1.5;direction:rtl;}
+.cp-inp:focus{border-color:#93c5fd;}
+.cp-send{background:#1a56db;color:#fff;border:none;border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+
+/* HEADER ICON BUTTONS */
+.hdr-icon-btn,#searchBtn,#darkBtn,#notifBtn,#adBtn,#adminMsgsBtn,#manageAdminsBtn,#writePermBtn,#updateModeHdrBtn{background:none;border:none;cursor:pointer;width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#888;transition:background .15s,color .15s;flex-shrink:0;text-decoration:none;position:relative;}
+.hdr-icon-btn:hover,#searchBtn:hover,#darkBtn:hover,#notifBtn:hover,#adBtn:hover,#adminMsgsBtn:hover,#manageAdminsBtn:hover,#writePermBtn:hover,#updateModeHdrBtn:hover{background:#f3f4f6;color:#333;}
+#darkBtn.active{background:#1e1e30;color:#a5b4fc;}
+#darkBtn.active:hover{background:#2a2a45;color:#c4b5fd;}
+#notifBtn.active{background:#fef3c7;color:#d97706;}
+#notifBtn.active:hover{background:#fde68a;color:#b45309;}
+#notifBtn.active::after,#darkBtn.active::after{
+  content:'';position:absolute;top:5px;right:5px;
+  width:6px;height:6px;border-radius:50%;
+  border:1.5px solid #fff;
+}
+#notifBtn.active::after{background:#d97706;}
+#darkBtn.active::after{background:#a5b4fc;}
+#writePermBtn.has-granted{background:#eff6ff;color:#1a56db;}
+#updateModeHdrBtn{display:none;}
+#updateModeHdrBtn.is-on{background:#dcfce7;color:#16a34a;}
+#updateModeHdrBtn.is-on:hover{background:#bbf7d0;color:#15803d;}
+#updateModeHdrBtn.is-on::after{
+  content:'';position:absolute;top:5px;right:5px;
+  width:6px;height:6px;border-radius:50%;
+  background:#16a34a;border:1.5px solid #fff;
+}
+/* super admin — יש מעדכנים */
+#updateModeHdrBtn.has-active{background:#dcfce7;color:#16a34a;}
+#updateModeHdrBtn.has-active:hover{background:#bbf7d0;color:#15803d;}
+#updateModeHdrBtn.has-active::after{
+  content:'';position:absolute;top:5px;right:5px;
+  width:6px;height:6px;border-radius:50%;
+  background:#16a34a;border:1.5px solid #fff;
+}
+/* super admin — אין מעדכנים */
+#updateModeHdrBtn.no-active{background:#fff7ed;color:#ea580c;}
+#updateModeHdrBtn.no-active:hover{background:#ffedd5;color:#c2410c;}
+#updateModeHdrBtn.no-active::after{
+  content:'';position:absolute;top:5px;right:5px;
+  width:6px;height:6px;border-radius:50%;
+  background:#ea580c;border:1.5px solid #fff;
+}
+
+/* ── Update mode popover (super admin) ── */
+#updateModePopover{
+  position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.13);z-index:300;
+  min-width:220px;overflow:hidden;
+  animation:pickerPop .14s ease-out;direction:rtl;display:none;
+}
+#updateModePopover.open{display:block;}
+.ump-hdr{padding:10px 14px 6px;font-size:11px;font-weight:800;color:#9ca3af;border-bottom:1px solid #f3f4f6;}
+.ump-body{padding:8px 12px;display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;}
+.ump-row{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#374151;}
+.ump-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;}
+.ump-empty{font-size:12px;color:#aaa;text-align:center;padding:10px 0;}
+
+/* ── Update mode time dialog ── */
+#updateTimeDialog{
+  position:fixed;inset:0;z-index:900;
+  background:rgba(0,0,0,.4);
+  display:none;align-items:center;justify-content:center;
+  animation:lbIn .15s ease;
+}
+#updateTimeDialog.open{display:flex;}
+.utd-box{
+  background:#fff;border-radius:18px;padding:24px 24px 20px;
+  width:280px;box-shadow:0 16px 48px rgba(0,0,0,.2);
+  direction:rtl;display:flex;flex-direction:column;gap:14px;
+}
+.utd-title{font-size:15px;font-weight:800;color:#111;}
+.utd-sub{font-size:12px;color:#888;margin-top:-8px;}
+.utd-time-inp{
+  width:100%;border:1.5px solid #e5e7eb;border-radius:10px;
+  padding:10px 12px;font-size:22px;font-weight:700;
+  font-family:'Heebo',sans-serif;outline:none;text-align:center;
+  direction:ltr;transition:border-color .15s;color:#111;
+}
+.utd-time-inp:focus{border-color:#1a56db;}
+.utd-btns{display:flex;gap:8px;}
+.utd-ok{flex:1;background:#16a34a;color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Heebo',sans-serif;}
+.utd-ok:hover{background:#15803d;}
+.utd-cancel{background:#f3f4f6;color:#6b7280;border:none;border-radius:10px;padding:10px 14px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;}
+.utd-cancel:hover{background:#e5e7eb;}
+
+/* ── No-update-mode notice near send button ── */
+#updateModeNotice{
+  display:none;align-items:center;gap:6px;
+  font-size:11px;font-weight:700;color:#92400e;
+  background:#fef3c7;border:1px solid #fde68a;
+  border-radius:8px;padding:4px 9px;white-space:nowrap;
+  cursor:pointer;transition:background .12s;flex-shrink:0;
+}
+#updateModeNotice:hover{background:#fde68a;}
+#updateModeNotice.show{display:inline-flex;}
+#adminMsgsBtn .unread-badge{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:#e02020;border:2px solid #fff;display:none;}
+#adminMsgsBtn .unread-badge.show{display:block;}
+
+/* DARK MODE */
+body.dark{background:#0f0f15;color:#e5e7eb;}
+body.dark header{background:#1a1a2e;border-color:#2a2a40;}
+body.dark .bubble{background:#1e1e30;color:#e5e7eb;}
+body.dark .bubble.is-red{background:#2a1010;border-color:#e02020;}
+body.dark .bubble-text{color:#d1d5db;font-weight:400;}
+body.dark .bubble-headline{color:#fff;}
+body.dark .msg-meta-name{color:#aaa;}
+body.dark .msg-meta-time{color:#666;}
+body.dark #feedWrap{background:#0f0f15;}
+body.dark .hdr-name{color:#fff;}
+
+/* SEARCH */
+#searchBar{position:absolute;top:50%;left:100%;margin-left:6px;transform:translateY(-50%);background:#fff;border:1.5px solid #e5e7eb;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.12);display:none;align-items:center;gap:6px;padding:5px 10px 5px 8px;z-index:200;width:300px;white-space:nowrap;animation:searchPop .15s ease-out;}
+@keyframes searchPop{from{opacity:0;transform:translateY(-50%) scaleX(.85) translateX(-10px)}to{opacity:1;transform:translateY(-50%) scaleX(1) translateX(0)}}
+#searchBar.open{display:flex;}
+body.dark #searchBar{background:#1a1a2e;border-color:#3a3a50;}
+#searchInput{flex:1;border:none;border-radius:99px;padding:4px 8px;font-size:14px;font-family:'Heebo',sans-serif;outline:none;direction:rtl;background:transparent;}
+body.dark #searchInput{color:#e5e7eb;}
+#searchInput::placeholder{color:#bbb;}
+#searchClear{background:none;border:none;cursor:pointer;color:#bbb;font-size:14px;padding:2px;display:none;line-height:1;flex-shrink:0;}
+#searchClear.show{display:block;}
+#searchResults{display:none;flex:1;overflow-y:auto;padding:10px 0 24px;}
+#searchResultsInner{max-width:780px;margin:0 60px 0 auto;padding:0 10px 0 20px;display:flex;flex-direction:column;gap:6px;}
+@media(max-width:600px){#searchResultsInner{margin:0;padding:0 8px;}}
+#searchEmpty{text-align:center;padding:40px 20px;color:#aaa;font-size:14px;display:none;}
+
+/* ══ ADMIN COMPOSE BAR (sticky bottom, only for admins) ══ */
+#composeEditBanner{
+  display:none;background:#fef3c7;border-bottom:1px solid #fde68a;
+  padding:5px 14px;font-size:11px;font-weight:700;color:#92400e;
+  direction:rtl;align-items:center;gap:6px;
+}
+#composeEditBanner.show{display:flex;}
+#adminComposeBar{
+  display:none;
+  position:fixed;
+  bottom:0;
+  right:0;
+  left:320px;
+  z-index:200;
+  background:#fff;
+  border-top:2px solid #e5e7eb;
+  box-shadow:0 -4px 20px rgba(0,0,0,.10);
+  direction:rtl;
+  flex-direction:column;
+}
+@media(max-width:900px){
+  #adminComposeBar{right:0;left:0;}
+}
+#adminComposeBar.show{display:flex;}
+
+/* Compose bar — blocked state (no write permission) */
+#adminComposeBar.blocked #composeEditor{
+  background:#f3f4f6;color:#9ca3af;cursor:not-allowed;pointer-events:none;border-color:#e5e7eb;
+}
+#adminComposeBar.blocked .compose-send-btn{
+  background:#d1d5db;cursor:not-allowed;box-shadow:none;pointer-events:none;
+}
+#adminComposeBar.blocked .compose-toolbar button:not(#profileToggle){
+  opacity:.35;pointer-events:none;
+}
+#adminComposeBar.blocked .ctb-dropdown-wrap{
+  opacity:.35;pointer-events:none;
+}
+#blockNotice{
+  display:none;padding:5px 14px;font-size:12px;font-weight:700;
+  color:#92400e;background:#fef3c7;border-bottom:1px solid #fde68a;
+  text-align:center;flex-shrink:0;
+}
+#blockNotice.show{display:block;}
+#updateModeBar{
+  display:none;padding:6px 14px;font-size:11px;font-weight:700;
+  color:#374151;background:#f0fdf4;border-bottom:1px solid #bbf7d0;
+  align-items:center;gap:8px;flex-shrink:0;direction:rtl;flex-wrap:wrap;
+}
+#updateModeBar.show{display:flex;}
+.update-mode-btn{
+  display:flex;align-items:center;gap:5px;border:none;border-radius:8px;
+  padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;
+  font-family:'Heebo',sans-serif;transition:all .15s;flex-shrink:0;
+}
+.update-mode-btn.on{background:#16a34a;color:#fff;}
+.update-mode-btn.off{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
+#updateModeWho{font-size:11px;color:#16a34a;font-weight:700;margin-right:auto;}
+
+/* Write perm avatar chips in header */
+.wperm-chip{
+  position:relative;cursor:pointer;border-radius:50%;
+  transition:transform .15s,box-shadow .15s;flex-shrink:0;
+}
+.wperm-chip:hover{transform:scale(1.12);}
+.wperm-chip.granted{box-shadow:0 0 0 2.5px #1a56db;}
+.wperm-chip.granted::after{
+  content:'✓';position:absolute;bottom:-2px;right:-2px;
+  width:12px;height:12px;border-radius:50%;
+  background:#1a56db;color:#fff;font-size:7px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  border:1.5px solid #fff;line-height:12px;text-align:center;
+}
+
+/* Toolbar */
+.compose-toolbar{
+  display:flex;align-items:center;gap:4px;
+  padding:6px 12px 4px;
+  border-bottom:1px solid #f0f0f0;
+  flex-wrap:wrap;
+}
+.ctb-btn{
+  background:none;border:1.5px solid #e5e7eb;border-radius:8px;
+  padding:4px 9px;font-size:11px;font-weight:700;color:#374151;
+  cursor:pointer;font-family:'Heebo',sans-serif;
+  display:flex;align-items:center;gap:4px;
+  transition:background .12s,border-color .12s;
+}
+.ctb-btn:hover{background:#f3f4f6;border-color:#d1d5db;}
+.ctb-btn.red-active{background:#fef2f2;border-color:#fecaca;color:#dc2626;}
+.ctb-btn.has-val{background:#f0fdf4;border-color:#bbf7d0;color:#16a34a;}
+
+/* Profile toggle */
+#profileToggle{
+  display:flex;align-items:center;gap:5px;
+  background:#eff6ff;border:1.5px solid #bfdbfe;
+  border-radius:8px;padding:4px 9px;
+  font-size:11px;font-weight:800;color:#1a56db;
+  cursor:pointer;font-family:'Heebo',sans-serif;
+  transition:all .15s;
+}
+#profileToggle.red{background:#fef2f2;border-color:#fecaca;color:#dc2626;}
+
+/* Editor area */
+.compose-main{display:flex;align-items:flex-end;gap:8px;padding:8px 12px;}
+#composeEditor{
+  flex:1;border:1.5px solid #e5e7eb;border-radius:14px;
+  padding:10px 14px;font-size:15px;font-family:'Heebo',sans-serif;
+  outline:none;resize:none;max-height:120px;overflow-y:auto;
+  line-height:1.6;direction:rtl;background:#fafafa;
+  transition:border-color .15s,box-shadow .15s;
+}
+#composeEditor:focus{border-color:#1a56db;background:#fff;box-shadow:0 0 0 3px rgba(26,86,219,.08);}
+#composeEditor:empty:before{content:attr(placeholder);color:#b0b8c4;}
+#composeEditor.drag-over{border-color:#1a56db!important;background:#f0f6ff!important;}
+.compose-send-btn{
+  width:42px;height:42px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,#1a56db,#1d4ed8);
+  color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;box-shadow:0 3px 10px rgba(26,86,219,.35);
+  transition:all .2s;
+}
+.compose-send-btn:hover{transform:scale(1.06);box-shadow:0 4px 14px rgba(26,86,219,.45);}
+.compose-send-btn.red{background:linear-gradient(135deg,#dc2626,#b91c1c);box-shadow:0 3px 10px rgba(220,38,38,.35);}
+
+/* Attachments preview strip */
+#attachPreview{
+  display:none;
+  padding:6px 12px;gap:8px;align-items:center;
+  border-bottom:1px solid #f0f0f0;flex-wrap:wrap;
+}
+#attachPreview.show{display:flex;}
+.attach-chip{
+  display:flex;align-items:center;gap:5px;
+  background:#f3f4f6;border:1px solid #e5e7eb;
+  border-radius:8px;padding:4px 8px;font-size:11px;font-weight:600;color:#374151;
+}
+.attach-chip button{background:none;border:none;cursor:pointer;color:#9ca3af;font-size:11px;padding:0;line-height:1;}
+.attach-chip button:hover{color:#dc2626;}
+
+/* Inline dropdowns in toolbar */
+.ctb-dropdown{
+  position:absolute;bottom:100%;right:0;
+  background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;
+  padding:14px;min-width:280px;
+  box-shadow:0 -8px 24px rgba(0,0,0,.12);
+  z-index:210;display:none;
+  animation:pickerPop .14s ease-out;
+  direction:rtl;
+}
+.ctb-dropdown.open{display:block;}
+.ctb-dropdown-wrap{position:relative;}
+.ctb-inp{
+  width:100%;border:1.5px solid #e5e7eb;border-radius:10px;
+  padding:7px 11px;font-size:13px;outline:none;direction:ltr;
+  font-family:'Heebo',sans-serif;margin-bottom:8px;
+  transition:border-color .15s;
+}
+.ctb-inp:focus{border-color:#1a56db;}
+.ctb-inp-label{font-size:11px;font-weight:700;color:#6b7280;margin-bottom:4px;display:block;}
+.ctb-add-btn{
+  width:100%;background:#1a56db;color:#fff;border:none;
+  border-radius:10px;padding:8px;font-size:13px;font-weight:700;
+  cursor:pointer;font-family:'Heebo',sans-serif;
+}
+
+/* LOAD MORE SPINNER */
+#loadMoreSpinner{display:none;align-items:center;justify-content:center;padding:16px;gap:8px;color:#aaa;font-size:13px;font-family:'Heebo',sans-serif;}
+
+/* UNREAD SEPARATOR */
+.unread-sep{
+  display:flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:800;color:#e02020;
+  padding:6px 0;margin:4px 0;direction:rtl;
+  position:relative;
+}
+.unread-sep::before,.unread-sep::after{content:'';flex:1;height:1.5px;background:#fecaca;}
+.unread-sep span{
+  background:#fff5f5;border:1px solid #fecaca;
+  border-radius:99px;padding:2px 10px;white-space:nowrap;
+  flex-shrink:0;
+}
+body.dark .unread-sep::before,body.dark .unread-sep::after{background:#4a1212;}
+body.dark .unread-sep span{background:#2a1010;border-color:#7f1d1d;}
+#loadMoreSpinner.show{display:flex;}
+.lm-ring{width:22px;height:22px;border-radius:50%;border:2.5px solid #e5e7eb;border-top-color:#1a56db;animation:spin .7s linear infinite;flex-shrink:0;}
+
+#scrollDownBtn{
+  position:fixed;
+  bottom:20px;
+  left:calc(320px + 12px); /* מעט בתוך הפיד, ליד הסיידבר */
+  width:44px;height:44px;
+  background:#fff;
+  border:1.5px solid #e5e7eb;
+  border-radius:50%;
+  display:none;align-items:center;justify-content:center;
+  box-shadow:0 4px 18px rgba(0,0,0,.15);
+  cursor:pointer;
+  z-index:201;
+  transition:bottom .2s ease;
+}
+#scrollDownBtn.show{display:flex;}
+#scrollDownBtn:hover{background:#f3f4f6;border-color:#d1d5db;}
+#scrollDownBtn .scroll-arrow{color:#374151;font-size:16px;line-height:1;}
+#scrollDownBtn .unread-dot{
+  position:absolute;top:4px;right:4px;
+  width:10px;height:10px;border-radius:50%;
+  background:#e02020;border:2px solid #fff;
+  display:none;box-shadow:none;
+}
+#scrollDownBtn.has-new .unread-dot{display:block;}
+@media(max-width:900px){
+  #scrollDownBtn{left:50%;transform:translateX(-50%);}
+}
+body.has-compose #scrollDownBtn{bottom:calc(var(--compose-h,120px) + 16px);}.unread-dot{width:8px;height:8px;border-radius:50%;background:#e02020;flex-shrink:0;display:none;box-shadow:0 0 0 2px #fff;}
+#scrollDownBtn.has-new .unread-dot{display:block;}
+
+#prog{position:fixed;top:0;inset-inline:0;height:2px;background:#1a56db;transform:scaleX(0);transform-origin:right;z-index:999;display:none;}
+#prog.on{display:block;animation:pr 1.1s ease-in-out infinite;}
+@keyframes pr{0%{transform:scaleX(0);transform-origin:right}50%{transform:scaleX(.55);transform-origin:right}100%{transform:scaleX(0);transform-origin:left}}
+
+#empty{display:none;text-align:center;padding:60px 20px;color:#aaa;}
+#empty i{font-size:36px;opacity:.2;margin-bottom:10px;display:block;}
+
+/* LIGHTBOX */
+#lightbox{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;cursor:zoom-out;animation:lbIn .18s ease;}
+@keyframes lbIn{from{opacity:0}to{opacity:1}}
+#lightbox.show{display:flex;}
+#lightbox img{max-width:94vw;max-height:90vh;border-radius:10px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,.5);cursor:default;}
+#lbClose{position:fixed;top:14px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:20px;cursor:pointer;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .12s;z-index:901;}
+#lbClose:hover{background:rgba(255,255,255,.28);}
+
+/* ══ ADMIN MESSAGES MODAL ══ */
+#adminMsgsModal{
+  position:fixed;inset:0;z-index:800;
+  background:rgba(0,0,0,.5);
+  display:none;align-items:center;justify-content:center;
+  padding:16px;
+}
+#adminMsgsModal.open{display:flex;}
+.admin-msgs-box{
+  background:#fff;border-radius:20px;padding:0;
+  max-width:480px;width:100%;max-height:85vh;
+  display:flex;flex-direction:column;
+  box-shadow:0 24px 60px rgba(0,0,0,.25);
+  overflow:hidden;
+}
+.admin-msgs-hdr{
+  padding:16px 20px;border-bottom:1px solid #f0f0f0;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.admin-msgs-title{font-size:15px;font-weight:800;color:#111;}
+.admin-msgs-close{background:none;border:none;font-size:16px;cursor:pointer;color:#aaa;padding:4px;border-radius:8px;}
+.admin-msgs-close:hover{background:#f3f4f6;}
+.admin-msgs-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+.admin-msg-item{border-radius:12px;padding:12px 14px;border:1px solid #e5e7eb;background:#fafafa;}
+.admin-msg-item.unread{background:#eff6ff;border-color:#bfdbfe;}
+.admin-msg-sender-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.admin-msg-av{width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;}
+.admin-msg-av img{width:100%;height:100%;object-fit:cover;}
+.admin-msg-name{font-size:12px;font-weight:800;color:#374151;}
+.admin-msg-time{font-size:10px;color:#aaa;margin-right:auto;}
+.admin-msg-text{font-size:13px;line-height:1.6;color:#374151;white-space:pre-wrap;}
+/* Send area — only for super admin */
+.admin-msgs-send{padding:12px 16px;border-top:1px solid #f0f0f0;display:none;gap:8px;align-items:flex-end;flex-shrink:0;}
+.admin-msgs-send.show{display:flex;}
+.admin-send-inp{
+  flex:1;border:1.5px solid #e5e7eb;border-radius:12px;
+  padding:8px 12px;font-size:13px;font-family:'Heebo',sans-serif;
+  resize:none;outline:none;max-height:80px;line-height:1.5;
+  direction:rtl;
+}
+.admin-send-inp:focus{border-color:#93c5fd;}
+.admin-send-btn{background:#1a56db;color:#fff;border:none;border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+
+/* AD POPUP */
+#adOverlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;}
+
+@media(max-width:600px){
+  #feedInner{margin:0;padding:0 8px;}
+  .bubble{min-width:0;}
+  .msg-col{flex:1;}
+  #commentsPanel{width:100vw;}
+}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <img class="login-logo-img" src="https://i.ibb.co/pBvLbsG3/ed89a1453931.png" onerror="this.style.display='none'">
+    <div class="login-title">שאגת הארי</div>
+    <div id="googleBtn"></div>
+  </div>
+</div>
+
+<!-- RIGHT SIDEBAR: Admin Chat (fills entire sidebar) -->
+<div id="rightSidebar">
+  <div id="adminChatPanel">
+    <div class="chat-panel-hdr">
+      <i class="fas fa-comments" style="color:#1a56db;font-size:11px;flex-shrink:0"></i>
+      <span class="chat-panel-title">צ'אט מנהלים</span>
+      <span class="chat-panel-presence"><div class="chat-pres-dot"></div><span id="chatPresenceCount">1</span> פעילים</span>
+      <button class="chat-minimize-btn" id="chatMinimizeBtn" onclick="toggleChatMinimize()" title="מזעור">
+        <i class="fas fa-minus"></i>
+      </button>
+    </div>
+    <div id="chatMessages">
+      <div class="chat-empty-msg" id="chatEmptyMsg">אין הודעות עדיין</div>
+    </div>
+    <div id="chatTypingBar" style="display:none;"></div>
+    <div id="mentionDropdown"></div>
+<div id="chatInputRow">
+      <textarea class="chat-inp" id="chatInput" rows="1" placeholder="הקלד הודעה..."
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,60)+'px';onChatType();checkChatMention(this)"
+        onkeydown="handleChatInputKey(event)"></textarea>
+      <button class="chat-send-btn" onclick="sendChatMsg()">
+        <i class="fas fa-paper-plane" style="font-size:10px"></i>
+      </button>
+    </div>
+  </div>
+  <!-- פרסומת מתחת לצ'אט (מנהלים) — מוסתרת כשצ'אט פתוח, גלויה כשממוזער -->
+  <div id="adInChat" style="display:none;flex:1;overflow:hidden;border-top:1px solid #f0f0f0;">
+    <iframe id="adInChatFrame" srcdoc="" style="width:100%;height:100%;border:none;display:none;"
+      sandbox="allow-scripts allow-popups allow-forms allow-top-navigation-by-user-activation"></iframe>
+    <a id="adInChatLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">
+      <img id="adInChatImg" src="" style="width:100%;height:auto;display:block;">
+    </a>
+  </div>
+</div>
+
+<!-- Ad block for non-admin sidebar -->
+<div id="adOnlySidebar" style="display:none;width:320px;min-width:320px;background:#fff;border-left:1px solid rgba(0,0,0,.08);flex-shrink:0;position:sticky;top:56px;height:calc(100vh - 56px);overflow:hidden;">
+  <a id="adSidebarLink" href="#" target="_blank" rel="noopener noreferrer">
+    <img id="adSidebarImg" src="" alt="פרסומת" style="width:100%;height:auto;display:block;">
+  </a>
+  <iframe id="adSidebarFrame" src="" style="display:none;width:100%;height:100%;border:none;" sandbox="allow-scripts allow-popups allow-forms allow-top-navigation-by-user-activation" loading="lazy"></iframe>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <img class="hdr-avatar" src="https://i.ibb.co/pBvLbsG3/ed89a1453931.png" onerror="this.style.background='#e02020'">
+    <div class="hdr-info">
+      <div class="hdr-name">שאגת הארי <span style="font-size:10px;font-weight:700;background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:6px;padding:1px 6px;vertical-align:middle;">בהרצה</span></div>
+      <div class="hdr-status"><div class="hdr-dot"></div>מחובר · עדכונים חיים</div>
+    </div>
+    <div class="hdr-user">
+      <div style="position:relative;">
+        <button id="searchBtn" onclick="toggleSearch()" title="חיפוש">
+          <i class="fas fa-search" style="font-size:13px"></i>
+        </button>
+        <div id="searchBar">
+          <input id="searchInput" type="text" placeholder="חיפוש..." oninput="onSearch(this.value)" />
+          <button id="searchClear" onclick="clearSearch()"><i class="fas fa-times"></i></button>
+        </div>
+      </div>
+      <a class="hdr-icon-btn" href="https://mail.google.com/mail/u/0/?view=cm&fs=1&tf=1&source=mailto&su=פנייה+למנהלי+%22שאגת+הארי%22&to=david%40hamakom.ovh&body=כתבו+כאן+את+תוכן+הפנייה%3A%0A" target="_blank" rel="noopener" title="פנייה למנהל">
+        <i class="fas fa-envelope" style="font-size:13px"></i>
+      </a>
+      <button id="darkBtn" onclick="toggleDark()" title="מצב כהה">
+        <i class="fas fa-moon" style="font-size:13px"></i>
+      </button>
+      <button id="notifBtn" onclick="toggleNotifications()" title="התראות">
+        <i class="fas fa-bell" style="font-size:13px"></i>
+      </button>
+      <button id="adminMsgsBtn" onclick="openAdminMsgs()" title="הודעות מנהל" style="display:none">
+        <i class="fas fa-bullhorn" style="font-size:12px"></i>
+        <div class="unread-badge" id="adminMsgsBadge"></div>
+      </button>
+      <button id="manageAdminsBtn" onclick="openManageAdmins()" title="ניהול מנהלים" style="display:none">
+        <i class="fas fa-user-cog" style="font-size:12px"></i>
+      </button>
+      <button id="adBtn" onclick="openAdPanel()" title="פרסומת" style="display:none">
+        <i class="fas fa-ad" style="font-size:13px"></i>
+      </button>
+      <div style="position:relative;">
+        <button id="writePermBtn" onclick="toggleWritePermDropdown(event)" title="הרשאות כתיבה" style="display:none">
+          <i class="fas fa-pen" style="font-size:12px"></i>
+        </button>
+        <div id="writePermDropdown" style="
+          display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);
+          background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;
+          box-shadow:0 8px 24px rgba(0,0,0,.13);z-index:300;
+          min-width:220px;overflow:hidden;
+          animation:pickerPop .14s ease-out;
+          direction:rtl;
+        ">
+          <div style="padding:10px 14px 6px;font-size:11px;font-weight:800;color:#9ca3af;border-bottom:1px solid #f3f4f6;">
+            הרשאות כתיבה לפיד
+          </div>
+          <div id="writePermList" style="padding:6px 8px;display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;"></div>
+        </div>
+      </div>
+      <div style="position:relative;">
+        <button id="updateModeHdrBtn" onclick="onUpdateModeHdrClick(event)" title="מצב עדכון">
+          <i class="fas fa-satellite-dish" style="font-size:12px"></i>
+        </button>
+        <div id="updateModePopover">
+          <div class="ump-hdr">מי מעדכן כרגע</div>
+          <div class="ump-body" id="updateModePopoverBody">
+            <div class="ump-empty">אין מעדכנים פעילים</div>
+          </div>
+        </div>
+      </div>
+      <span id="adminBadge"><i class="fas fa-users"></i><span id="adminUserCount">0</span></span>
+      <div id="userAvatar" style="position:relative;"></div>
+    </div>
+  </header>
+
+  <div id="feedWrap">
+    <div id="loadMoreSpinner"><div class="lm-ring"></div>טוען עוד...</div>
+    <div id="feedInner"></div>
+    <div id="empty"><i class="fas fa-satellite-dish"></i><p>ממתין לעדכונים...</p></div>
+  </div>
+
+  <div id="searchResults">
+    <div id="searchResultsInner"></div>
+    <div id="searchEmpty">לא נמצאו תוצאות</div>
+  </div>
+
+  <button id="scrollDownBtn" onclick="scrollToBottom()">
+    <div class="unread-dot"></div>
+    <i class="fas fa-arrow-down scroll-arrow"></i>
+  </button>
+</div>
+
+<!-- ══ ADMIN COMPOSE BAR ══ -->
+<div id="adminComposeBar">
+  <div id="composeEditBanner">
+    <i class="fas fa-pen" style="font-size:10px"></i>
+    <span>מצב עריכה — ערוך את ההודעה ולחץ ✓ לשמור</span>
+  </div>
+  <div id="updateModeBar">
+    <button class="update-mode-btn off" id="updateModeBtn" onclick="toggleUpdateMode()">
+      <i class="fas fa-times" style="font-size:9px"></i> לא מעדכן
+    </button>
+    <span id="updateModeWho"></span>
+  </div>
+  <div id="blockNotice">✋ אין לך הרשאת כתיבה כרגע — המתן ל-david להעניק הרשאה</div>
+  <div class="compose-toolbar">
+    <button id="profileToggle" onclick="toggleComposeProfile()">
+      <i class="fas fa-newspaper" id="profileIcon"></i>
+      <span id="profileLabel">מבזק חדשות</span>
+    </button>
+    <div style="width:1px;height:16px;background:#e5e7eb;margin:0 2px;"></div>
+    <button class="ctb-btn" onmousedown="event.preventDefault()" onclick="composeFormat('bold')" title="מודגש"><i class="fas fa-bold"></i></button>
+    <button class="ctb-btn" onmousedown="event.preventDefault()" onclick="composeFormat('italic')" title="נטוי"><i class="fas fa-italic"></i></button>
+    <div style="width:1px;height:16px;background:#e5e7eb;margin:0 2px;"></div>
+    <div class="ctb-dropdown-wrap" id="imgDropWrap">
+      <button class="ctb-btn" id="imgDropBtn" onclick="toggleCtbDropdown('imgDrop')" title="תמונה">
+        <i class="fas fa-image"></i> תמונה
+      </button>
+      <div class="ctb-dropdown" id="imgDrop">
+        <span class="ctb-inp-label">כתובת URL לתמונה</span>
+        <input class="ctb-inp" id="composeImgUrl" type="text" placeholder="https://..." oninput="updateComposeImg()">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><div style="flex:1;height:1px;background:#e5e7eb;"></div><span style="font-size:10px;color:#aaa;">או</span><div style="flex:1;height:1px;background:#e5e7eb;"></div></div>
+        <label style="display:flex;align-items:center;justify-content:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:8px;font-size:12px;font-weight:700;color:#1a56db;cursor:pointer;">
+          <i class="fas fa-upload"></i> העלה תמונה
+          <input type="file" accept="image/*" style="display:none;" onchange="uploadComposeImg(this.files[0]);this.value='';">
+        </label>
+        <div id="composeImgThumb" style="display:none;margin-top:8px;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb;">
+          <img id="composeImgThumbImg" style="width:100%;max-height:100px;object-fit:contain;display:block;">
+          <button onclick="clearComposeImg()" style="width:100%;background:#fef2f2;border:none;border-top:1px solid #fecaca;color:#dc2626;font-size:11px;font-weight:700;cursor:pointer;padding:4px;font-family:'Heebo',sans-serif;">הסר תמונה</button>
+        </div>
+      </div>
+    </div>
+    <div class="ctb-dropdown-wrap" id="vidDropWrap">
+      <button class="ctb-btn" id="vidDropBtn" onclick="toggleCtbDropdown('vidDrop')" title="סרטון">
+        <i class="fas fa-video"></i> סרטון
+      </button>
+      <div class="ctb-dropdown" id="vidDrop">
+        <span class="ctb-inp-label">קישור לסרטון</span>
+        <input class="ctb-inp" id="composeVidUrl" type="text" placeholder="https://..." oninput="updateComposeVid()">
+        <div id="driveUploadWrap" style="display:none;margin-top:8px;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><div style="flex:1;height:1px;background:#e5e7eb;"></div><span style="font-size:10px;color:#aaa;">או העלה לDrive</span><div style="flex:1;height:1px;background:#e5e7eb;"></div></div>
+          <label style="display:flex;align-items:center;justify-content:center;gap:6px;background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:8px;font-size:12px;font-weight:700;color:#7c3aed;cursor:pointer;" onmouseover="this.style.background='#f3e8ff'" onmouseout="this.style.background='#faf5ff'">
+            <i class="fab fa-google-drive"></i> העלה לGoogle Drive
+            <input type="file" accept="video/*" style="display:none;" onchange="uploadVidToDrive(this.files[0]);this.value='';">
+          </label>
+          <div id="driveVidStatus" style="display:none;margin-top:8px;background:#f3e8ff;border:1px solid #e9d5ff;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:700;color:#7c3aed;align-items:center;gap:6px;">
+            <i class="fas fa-spinner fa-spin"></i> <span id="driveVidStatusText">מעלה...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ctb-dropdown-wrap" id="btnDropWrap">
+      <button class="ctb-btn" id="btnDropBtn" onclick="toggleCtbDropdown('btnDrop')" title="כפתור">
+        <i class="fas fa-mouse-pointer"></i> כפתור
+      </button>
+      <div class="ctb-dropdown" id="btnDrop">
+        <span class="ctb-inp-label">טקסט כפתור</span>
+        <input class="ctb-inp" id="composeBtnText" placeholder="לחץ כאן" style="direction:rtl;">
+        <span class="ctb-inp-label">קישור</span>
+        <input class="ctb-inp" id="composeBtnUrl" placeholder="https://...">
+        <button class="ctb-add-btn" onclick="addComposeButton()">+ הוסף כפתור</button>
+        <div id="composeBtnList" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"></div>
+      </div>
+    </div>
+    <div class="ctb-dropdown-wrap" id="colorDropWrap">
+      <button class="ctb-btn" id="colorDropBtn" onclick="toggleCtbDropdown('colorDrop')" title="צבע טקסט">
+        <i class="fas fa-palette" style="font-size:11px"></i> צבע
+      </button>
+      <div class="ctb-dropdown" id="colorDrop" style="min-width:220px;">
+        <span class="ctb-inp-label">בחר צבע לטקסט הנבחר</span>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+          <button onclick="applyTextColor('#e02020')" style="width:28px;height:28px;border-radius:6px;background:#e02020;border:2px solid transparent;cursor:pointer;" title="אדום"></button>
+          <button onclick="applyTextColor('#1a56db')" style="width:28px;height:28px;border-radius:6px;background:#1a56db;border:2px solid transparent;cursor:pointer;" title="כחול"></button>
+          <button onclick="applyTextColor('#059669')" style="width:28px;height:28px;border-radius:6px;background:#059669;border:2px solid transparent;cursor:pointer;" title="ירוק"></button>
+          <button onclick="applyTextColor('#d97706')" style="width:28px;height:28px;border-radius:6px;background:#d97706;border:2px solid transparent;cursor:pointer;" title="כתום"></button>
+          <button onclick="applyTextColor('#7c3aed')" style="width:28px;height:28px;border-radius:6px;background:#7c3aed;border:2px solid transparent;cursor:pointer;" title="סגול"></button>
+          <button onclick="applyTextColor('#db2777')" style="width:28px;height:28px;border-radius:6px;background:#db2777;border:2px solid transparent;cursor:pointer;" title="ורוד"></button>
+          <button onclick="applyTextColor('#0891b2')" style="width:28px;height:28px;border-radius:6px;background:#0891b2;border:2px solid transparent;cursor:pointer;" title="תכלת"></button>
+          <button onclick="applyTextColor('#374151')" style="width:28px;height:28px;border-radius:6px;background:#374151;border:2px solid transparent;cursor:pointer;" title="כהה"></button>
+          <button onclick="applyTextColor('#9ca3af')" style="width:28px;height:28px;border-radius:6px;background:#9ca3af;border:2px solid transparent;cursor:pointer;" title="אפור"></button>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="color" id="customColorPicker" value="#e02020" style="width:36px;height:28px;border:none;border-radius:6px;cursor:pointer;padding:0;">
+          <button class="ctb-add-btn" onclick="applyTextColor(document.getElementById('customColorPicker').value)" style="flex:1;">החל צבע מותאם</button>
+        </div>
+        <button onclick="removeTextColor()" style="margin-top:8px;width:100%;background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;border-radius:10px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">✕ הסר צבע</button>
+      </div>
+    </div>
+    <button class="ctb-btn" onmousedown="event.preventDefault()" onclick="insertDivider()" title="קו מפריד">
+      <i class="fas fa-minus" style="font-size:11px"></i> קו
+    </button>
+    <div class="ctb-dropdown-wrap" id="linkDropWrap">
+      <button class="ctb-btn" id="linkDropBtn" onclick="saveLinkSelection();toggleCtbDropdown('linkDrop')" title="הוסף קישור">
+        <i class="fas fa-link" style="font-size:11px"></i> קישור
+      </button>
+      <div class="ctb-dropdown" id="linkDrop" style="min-width:260px;">
+        <span class="ctb-inp-label">טקסט הקישור</span>
+        <input class="ctb-inp" id="composeLinkText" placeholder="לחץ כאן..." style="direction:rtl;margin-bottom:8px;">
+        <span class="ctb-inp-label">כתובת URL</span>
+        <input class="ctb-inp" id="composeLinkUrl" placeholder="https://..." style="margin-bottom:8px;">
+        <button class="ctb-add-btn" onclick="insertComposeLink()">הוסף קישור</button>
+      </div>
+    </div>
+    <div class="ctb-dropdown-wrap" id="htmlDropWrap">
+      <button class="ctb-btn" id="htmlDropBtn" onclick="toggleCtbDropdown('htmlDrop')" title="הטמע דף HTML">
+        <i class="fas fa-code" style="font-size:11px"></i> HTML
+      </button>
+      <div class="ctb-dropdown" id="htmlDrop" style="min-width:320px;">
+        <span class="ctb-inp-label">הדבק קוד HTML מלא</span>
+        <textarea id="composeHtmlCode" rows="6" placeholder="<!DOCTYPE html>..." style="width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 11px;font-size:12px;font-family:monospace;outline:none;resize:vertical;direction:ltr;margin-bottom:8px;min-height:100px;transition:border-color .15s;" onfocus="this.style.borderColor='#1a56db'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+        <div style="display:flex;gap:6px;">
+          <button class="ctb-add-btn" onclick="applyHtmlCode()" style="flex:1;">הטמע</button>
+          <button onclick="clearHtmlCode()" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">נקה</button>
+        </div>
+        <div id="htmlPreviewBadge" style="display:none;margin-top:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#16a34a;display:flex;align-items:center;gap:5px;">
+          <i class="fas fa-check-circle"></i> <span>קוד HTML מוכן לשליחה</span>
+          <button onclick="clearHtmlCode()" style="margin-right:auto;background:none;border:none;cursor:pointer;color:#dc2626;font-size:11px;">✕</button>
+        </div>
+      </div>
+    </div>
+    <button class="ctb-btn" onmousedown="event.preventDefault()" onclick="insertHeading()" title="כותרת — מודגש + נקודה מפרידה">
+      <i class="fas fa-heading" style="font-size:11px"></i> כותרת
+    </button>
+    <div style="margin-right:auto;display:flex;align-items:center;gap:4px;">
+      <span id="composeCharCount" style="font-size:10px;color:#aaa;font-weight:600;">0</span>
+      <button class="ctb-btn" onclick="clearCompose()" title="נקה"><i class="fas fa-trash-alt" style="color:#e02020;"></i></button>
+    </div>
+  </div>
+
+  <div id="attachPreview"></div>
+
+  <div class="compose-main">
+    <div id="composeEditor" contenteditable="true" placeholder="כתוב עדכון לפיד..."
+      oninput="onComposeChange()"
+      onkeydown="onComposeKeyDown(event)"
+      ondragover="composeDragOver(event)"
+      ondragleave="composeDragLeave(event)"
+      ondrop="composeDrop(event)"
+      onpaste="composePaste(event)"
+    ></div>
+    <button id="updateModeNotice" onclick="toggleUpdateMode()" title="לחץ להפעלת מצב מעדכן">
+      <i class="fas fa-satellite-dish" style="font-size:10px"></i> לא מעדכן — לחץ להפעלה
+    </button>
+    <button class="compose-send-btn" id="composeSendBtn" onclick="sendFeedPost()" title="שלח">
+      <i class="fas fa-paper-plane" style="font-size:14px"></i>
+    </button>
+    <button class="compose-send-btn" id="composeEditConfirmBtn" onclick="saveEditMsg()" title="שמור עריכה" style="display:none;background:#059669;">
+      <i class="fas fa-check" style="font-size:14px"></i>
+    </button>
+    <button class="compose-send-btn" id="composeEditCancelBtn" onclick="cancelEditMode()" title="בטל עריכה" style="display:none;background:#6b7280;">
+      <i class="fas fa-times" style="font-size:14px"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ══ UPDATE TIME DIALOG ══ -->
+<div id="updateTimeDialog">
+  <div class="utd-box">
+    <div class="utd-title">🟢 הפעלת מצב מעדכן</div>
+    <div class="utd-sub">עד מתי בערך תעדכן?</div>
+    <input class="utd-time-inp" id="updateTimeInput" type="time" placeholder="שעה">
+    <div class="utd-btns">
+      <button class="utd-cancel" onclick="closeUpdateTimeDialog()">ביטול</button>
+      <button class="utd-ok" onclick="confirmUpdateTime()">✓ הפעל</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT CONTEXT MENU -->
+<div id="chatCtxMenu"></div>
+
+<!-- EMOJI PICKER -->
+<div id="emojiPicker">
+  <button class="ep-btn" onclick="pickEmoji('❤️')">❤️</button>
+  <button class="ep-btn" onclick="pickEmoji('👍')">👍</button>
+  <button class="ep-btn" onclick="pickEmoji('😂')">😂</button>
+  <button class="ep-btn" onclick="pickEmoji('😭')">😭</button>
+  <button class="ep-btn" onclick="pickEmoji('🔥')">🔥</button>
+  <button class="ep-btn" onclick="pickEmoji('🙏')">🙏</button>
+  <button class="ep-btn" onclick="pickEmoji('😍')">😍</button>
+  <button class="ep-btn" onclick="pickEmoji('😮')">😮</button>
+  <button class="ep-btn" onclick="pickEmoji('💯')">💯</button>
+  <button class="ep-btn" onclick="pickEmoji('👎')">👎</button>
+  <button class="ep-btn" onclick="pickEmoji('😊')">😊</button>
+  <button class="ep-btn" onclick="pickEmoji('😢')">😢</button>
+  <button class="ep-btn" onclick="pickEmoji('🤬')">🤬</button>
+  <button class="ep-btn" onclick="pickEmoji('💥')">💥</button>
+  <button class="ep-btn" onclick="pickEmoji('🥳')">🥳</button>
+  <button class="ep-btn" onclick="pickEmoji('😕')">😕</button>
+  <button class="ep-btn" onclick="pickEmoji('🍿')">🍿</button>
+  <button class="ep-btn" onclick="pickEmoji('💪')">💪</button>
+  <button class="ep-btn" onclick="pickEmoji('🚀')">🚀</button>
+  <button class="ep-btn" onclick="pickEmoji('😉')">😉</button>
+  <button class="ep-btn" onclick="pickEmoji('🥵')">🥵</button>
+  <button class="ep-btn" onclick="pickEmoji('🤑')">🤑</button>
+  <button class="ep-btn" onclick="pickEmoji('🎯')">🎯</button>
+  <button class="ep-btn" onclick="pickEmoji('🌀')">🌀</button>
+  <button class="ep-btn" onclick="pickEmoji('😌')">😌</button>
+  <button class="ep-btn" onclick="pickEmoji('💔')">💔</button>
+  <button class="ep-btn" onclick="pickEmoji('😨')">😨</button>
+  <button class="ep-btn" onclick="pickEmoji('🤣')">🤣</button>
+  <button class="ep-btn" onclick="pickEmoji('📖')">📖</button>
+</div>
+
+<!-- AD MANAGEMENT MODAL -->
+<div id="adModal" style="display:none;position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.5);align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:20px;padding:28px;max-width:500px;width:92%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);position:relative">
+    <button onclick="closeAdPanel()" style="position:absolute;top:14px;left:14px;background:#f3f4f6;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;color:#666;font-size:14px">✕</button>
+    <div style="font-size:16px;font-weight:800;color:#111;margin-bottom:20px;text-align:right">📢 ניהול פרסומות</div>
+    <div style="border:1.5px solid #e5e7eb;border-radius:14px;padding:16px;margin-bottom:14px;">
+      <div style="font-size:13px;font-weight:800;color:#1a56db;margin-bottom:12px;"><i class="fas fa-window-restore" style="font-size:12px"></i> פרסומת פופאפ</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;">תמונה (URL) — או דף HTML:</div>
+        <input id="adPopupImageUrl" type="text" placeholder="קישור לתמונה https://..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:'Heebo',sans-serif;width:100%">
+        <div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:1px;background:#e5e7eb"></div><span style="font-size:10px;color:#aaa;">או</span><div style="flex:1;height:1px;background:#e5e7eb"></div></div>
+        <textarea id="adPopupHtmlUrl" rows="5" placeholder="הדבק קוד HTML כאן..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:12px;outline:none;direction:ltr;font-family:monospace;width:100%;resize:vertical;min-height:80px;transition:border-color .15s;" onfocus="this.style.borderColor='#1a56db'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+        <input id="adPopupLinkUrl" type="text" placeholder="קישור ללחיצה https://... (לתמונה בלבד)" style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:'Heebo',sans-serif;width:100%">
+        <div style="display:flex;gap:8px">
+          <button onclick="saveAd('popup')" style="flex:1;background:#1a56db;color:#fff;border:none;border-radius:10px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif">שמור</button>
+          <button onclick="deleteAd('popup')" style="flex:1;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:10px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif">הסר</button>
+        </div>
+      </div>
+    </div>
+    <div style="border:1.5px solid #e5e7eb;border-radius:14px;padding:16px;">
+      <div style="font-size:13px;font-weight:800;color:#059669;margin-bottom:12px;"><i class="fas fa-columns" style="font-size:12px"></i> פרסומת עמודה צדדית</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;">תמונה (URL) — או דף HTML:</div>
+        <input id="adSideImageUrl" type="text" placeholder="קישור לתמונה https://..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:'Heebo',sans-serif;width:100%">
+        <div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:1px;background:#e5e7eb"></div><span style="font-size:10px;color:#aaa;">או</span><div style="flex:1;height:1px;background:#e5e7eb"></div></div>
+        <textarea id="adSideHtmlUrl" rows="5" placeholder="הדבק קוד HTML כאן..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:12px;outline:none;direction:ltr;font-family:monospace;width:100%;resize:vertical;min-height:80px;transition:border-color .15s;" onfocus="this.style.borderColor='#059669'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+        <input id="adSideLinkUrl" type="text" placeholder="קישור ללחיצה https://... (לתמונה בלבד)" style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:'Heebo',sans-serif;width:100%">
+        <div style="display:flex;gap:8px">
+          <button onclick="saveAd('side')" style="flex:1;background:#059669;color:#fff;border:none;border-radius:10px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif">שמור</button>
+          <button onclick="deleteAd('side')" style="flex:1;background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:10px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif">הסר</button>
+        </div>
+      </div>
+    </div>
+    <div id="adMsg" style="display:none;margin-top:12px;font-size:12px;font-weight:600;text-align:center"></div>
+  </div>
+</div>
+
+<!-- ADMIN MESSAGES MODAL -->
+<div id="adminMsgsModal" onclick="closeAdminMsgs()">
+  <div class="admin-msgs-box" onclick="event.stopPropagation()">
+    <div class="admin-msgs-hdr">
+      <span class="admin-msgs-title">📢 הודעות מנהל</span>
+      <button class="admin-msgs-close" onclick="closeAdminMsgs()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="admin-msgs-body" id="adminMsgsBody">
+      <div style="text-align:center;padding:30px;color:#aaa;font-size:13px;">אין הודעות</div>
+    </div>
+    <div class="admin-msgs-send" id="adminMsgsSendRow">
+      <textarea class="admin-send-inp" id="adminMsgInput" rows="1" placeholder="שלח הודעה לכל המנהלים..."
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAdminMsg();}"></textarea>
+      <button class="admin-send-btn" onclick="sendAdminMsg()">
+        <i class="fas fa-paper-plane" style="font-size:11px"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MANAGE ADMINS MODAL (super admin only) -->
+<div id="manageAdminsModal" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:20px;max-width:440px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.25);overflow:hidden;">
+    <div style="padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <span style="font-size:15px;font-weight:800;color:#111;">⚙️ ניהול מנהלים</span>
+      <button onclick="closeManageAdmins()" style="background:none;border:none;font-size:16px;cursor:pointer;color:#aaa;padding:4px;border-radius:8px;">✕</button>
+    </div>
+    <div id="adminsList" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;"></div>
+    <div style="padding:14px 16px;border-top:1px solid #f0f0f0;flex-shrink:0;">
+      <div style="font-size:11px;font-weight:700;color:#6b7280;margin-bottom:8px;">הוספת מנהל חדש</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <input id="newAdminEmail" type="email" placeholder="אימייל Google..." style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:ltr;font-family:'Heebo',sans-serif;width:100%;transition:border-color .15s;" onfocus="this.style.borderColor='#93c5fd'" onblur="this.style.borderColor='#e5e7eb'">
+        <input id="newAdminName" type="text" placeholder="שם תצוגה (בעברית/אנגלית)" style="border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 12px;font-size:13px;outline:none;direction:rtl;font-family:'Heebo',sans-serif;width:100%;transition:border-color .15s;" onfocus="this.style.borderColor='#93c5fd'" onblur="this.style.borderColor='#e5e7eb'" onkeydown="if(event.key==='Enter')addAdmin()">
+        <button onclick="addAdmin()" style="background:#1a56db;color:#fff;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">+ הוסף מנהל</button>
+      </div>
+      <div id="adminMsgResult" style="display:none;margin-top:8px;font-size:12px;font-weight:600;text-align:center;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMENTS PANEL -->
+<div id="cpOverlay" onclick="closeComments()"></div>
+<div id="commentsPanel">
+  <div class="cp-hdr">
+    <span class="cp-title">💬 תגובות</span>
+    <button class="cp-close" onclick="closeComments()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="cp-body" id="cpBody"></div>
+  <div class="cp-inp-row">
+    <textarea class="cp-inp" id="cpInp" placeholder="כתוב תגובה..." rows="1"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendComment();}"></textarea>
+    <button class="cp-send" onclick="sendComment()"><i class="fas fa-paper-plane" style="font-size:12px"></i></button>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lbClose" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+  <img id="lbImg" src="" onclick="event.stopPropagation()">
+</div>
+
+<script>
+const BACKEND = 'https://dhoc97909.pythonanywhere.com';
+const GOOGLE_CLIENT_ID = '856723702772-jm929ihp29ovhribfaaph17pbaq6qr3n.apps.googleusercontent.com';
+const LOGO = 'https://i.ibb.co/pBvLbsG3/ed89a1453931.png';
+const ADMIN_EMAIL = 'david@hamakom.ovh';
+const SUPER_ADMINS = ['david@hamakom.ovh','0533192512a@gmail.com'];
+const STORAGE_KEY = 'shaagat_hari_user';
+const IMGBB_KEY = '74b5db34f7d743e270990275f1afd0ee';
+
+const MAX_COMMENT_LEN = 500;
+const MAX_EMOJI_LEN   = 8;
+
+let me = null, items = [], lastTs = 0, newCount = 0, atBottom = true;
+let activePicker = null, activeCmtMsgId = null;
+let rxnCache = {}, cmtCount = {};
+const knownIds = new Set();
+let pollPending = false;
+let oldestTs = 0;
+let allLoaded = false;
+let loadingMore = false;
+let _isAllowedAdmin = false;
+
+let composeProfile = 'news';
+let composeImgUrl = '';
+let composeVidUrl = '';
+let composeBtns = [];
+let composeHtmlCode = '';
+
+let chatLastIds = '';
+let chatTypingTimer = null;
+
+let adminMsgsLastId = null;
+let adminMsgsUnread = 0;
+
+const REACT_SVG = `<svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.65"/><circle cx="8.5" cy="9.5" r="1.1" fill="currentColor"/><circle cx="13.5" cy="9.5" r="1.1" fill="currentColor"/><path d="M8 13.2c.65 1.5 2 2.2 3 2.2s2.35-.72 3-2.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+
+function esc(t){return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escAttr(t){return esc(t).replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+function rich(t){
+  if(!t)return'';
+  let s=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  s=s.replace(/\u200Bquote:([a-f0-9\-]+)\n((?:&gt; [^\n]*\n?)*)\u200B\n*/g,(m,qid,body)=>{
+    const lines=body.replace(/^&gt; /gm,'').trim().split('\n');
+    const firstLine=lines[0]||'';
+    const rest=lines.slice(1).join(' ').trim();
+    const preview=`<strong>${firstLine}</strong>`+(rest?' — <span style="font-weight:400">'+rest.substring(0,80)+(rest.length>80?'…':'')+'</span>':'');
+    return `<div class="quote-block" onclick="jumpToQuotedMsg('${qid}')" title="לחץ לקפוץ להודעה המצוטטת"><i class="fas fa-quote-right" style="font-size:9px;color:#9ca3af;"></i><span class="quote-block-text">${preview}</span></div>`;
+  });
+  s=s.replace(/\u200B/g,'');
+  s=s.replace(/\n/g,'<br>');
+  s=s.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/\*([^*\n]+)\*/g,'<strong>$1</strong>');
+  s=s.replace(/__([^_\n]+)__/g,'<u>$1</u>');
+  s=s.replace(/_([^_\n]+)_/g,'<em>$1</em>');
+  s=s.replace(/~~([^~\n]+)~~/g,'<s>$1</s>');
+  s=s.replace(/---DIVIDER---/g,'<hr class="bubble-divider">');
+  s=s.replace(/<br>\s*(<hr[^>]*>)\s*<br>/g,'$1');
+  s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  s=s.replace(/(?<!href=")(https?:\/\/[^\s<>"']{1,500})/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+  s=s.replace(/\x02color:([^\x03]+)\x03([\s\S]*?)\x02\/color\x03/g,'<span style=\"color:$1\">$2</span>');
+  return s;
+}
+
+function timeLabel(e){
+  const today=new Date().toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric'});
+  return (e.date&&e.date!==today)?e.date+' '+e.time:(e.time||'');
+}
+
+function fixServerTime(t){
+  if(!t||!t.includes(':'))return t;
+  const[h,m]=t.split(':').map(Number);
+  return ((h+2)%24).toString().padStart(2,'0')+':'+m.toString().padStart(2,'0');
+}
+
+function isSuperAdmin(){return SUPER_ADMINS.includes(me?.email?.toLowerCase());}
+function isAdmin(){return _isAllowedAdmin;}
+
+async function checkAllowedAdmin(){
+  if(!me)return;
+  try{
+    const r=await fetch(BACKEND+'/allowed_list');
+    const d=await r.json();
+    const emails=(d.emails||[]).map(e=>typeof e==='string'?e:e.email).map(e=>e.toLowerCase());
+    _isAllowedAdmin=emails.includes(me.email.toLowerCase())||isSuperAdmin();
+  }catch(e){_isAllowedAdmin=isSuperAdmin();}
+
+  if(_isAllowedAdmin){
+    await loadAllowedMap();
+    document.getElementById('adminComposeBar').classList.add('show');
+    document.getElementById('adminMsgsBtn').style.display='flex';
+    document.getElementById('adminChatPanel').classList.add('show');
+    document.getElementById('rightSidebar').classList.add('show');
+    loadAdminChat();
+    setInterval(loadAdminChat, 2500);
+    setInterval(pollChatTyping, 2500);
+    loadAdminMsgs();
+    setInterval(loadAdminMsgs, 5000);
+    pingChatPresence();
+    setInterval(pingChatPresence, 15000);
+    await pollWritePerm();
+    setInterval(pollWritePerm, 3000);
+    pollUpdateMode();
+    setInterval(pollUpdateMode, 5000);
+    document.getElementById('feedWrap').style.paddingBottom='120px';
+  }
+
+  if(isSuperAdmin()){
+    // david לא blocked לעולם — הסר blocked מיד
+    document.getElementById('adminComposeBar')?.classList.remove('blocked');
+    document.getElementById('blockNotice')?.classList.remove('show');
+    // הצג כפתור העלאה לDrive בדרופדאון הסרטון
+    const driveWrap=document.getElementById('driveUploadWrap');
+    if(driveWrap)driveWrap.style.display='block';
+    document.getElementById('adminBadge').classList.add('show');
+    document.getElementById('adBtn').style.display='flex';
+    document.getElementById('adminMsgsSendRow').classList.add('show');
+    document.getElementById('manageAdminsBtn').style.display='flex';
+    document.getElementById('writePermBtn').style.display='flex';
+    loadAdminUsers();
+    setInterval(loadAdminUsers, 30000);
+  }
+}
+
+/* ── AUTH ── */
+function saveUser(u){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(u));}catch(e){}}
+function loadSavedUser(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)return JSON.parse(r);}catch(e){}return null;}
+function clearSavedUser(){try{localStorage.removeItem(STORAGE_KEY);}catch(e){}}
+
+function toggleUserMenu(e){
+  e.stopPropagation();
+  const menu=document.getElementById('userMenu');
+  if(!menu)return;
+  const isOpen=menu.style.display!=='none';
+  menu.style.display=isOpen?'none':'block';
+  if(!isOpen){setTimeout(()=>document.addEventListener('click',()=>{menu.style.display='none';},{once:true}),0);}
+}
+
+function doLogout(){
+  clearSavedUser();me=null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  try{google.accounts.id.disableAutoSelect();}catch(e){}
+}
+
+async function verifyAndLogin(user){
+  // תקן שם מקושקש אם נשמר מגרסה ישנה
+  if(user.name&&(user.name.includes('×')||user.name.includes('Ã'))){
+    user.name=user.email.split('@')[0];
+  }
+  me=user;saveUser(user);applyLogin();return true;
+}
+
+function applyLogin(){
+  const av=document.getElementById('userAvatar');
+  const avatarHtml=me.picture
+    ?`<img src="${escAttr(me.picture)}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid #eee">`
+    :`<div style="width:30px;height:30px;border-radius:50%;background:#1a56db;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center">${esc(me.name[0].toUpperCase())}</div>`;
+  av.innerHTML=`<div style="cursor:pointer" onclick="toggleUserMenu(event)">${avatarHtml}</div>
+  <div id="userMenu" style="display:none;position:absolute;top:48px;left:0;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.14);z-index:200;min-width:160px;overflow:hidden;font-family:'Heebo',sans-serif;">
+    <div style="padding:10px 14px;font-size:12px;font-weight:700;color:#374151;border-bottom:1px solid #f3f4f6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(me.name)}</div>
+    <button onclick="doLogout()" style="width:100%;padding:10px 14px;text-align:right;background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:#dc2626;font-family:'Heebo',sans-serif;display:flex;align-items:center;gap:8px;"><i class="fas fa-sign-out-alt"></i> התנתק</button>
+  </div>`;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').style.display='flex';
+
+  fetch(BACKEND+'/feed_login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email,name:me.name,picture:me.picture})})
+    .then(r=>r.json()).then(d=>{if(isSuperAdmin()&&d.count!=null)document.getElementById('adminUserCount').textContent=d.count;}).catch(()=>{});
+
+  checkAllowedAdmin();
+  if(isSuperAdmin())loadAllowedMap();
+  loadFeed();
+  setTimeout(loadAd,3000);
+  setInterval(loadAd, 60*60*1000);
+  initDark();
+  initNotifications();
+}
+
+async function loadAdminUsers(){
+  try{
+    const r=await fetch(BACKEND+'/feed_logins?email='+encodeURIComponent(me.email));
+    const d=await r.json();
+    document.getElementById('adminUserCount').textContent=(d.logins||[]).length;
+  }catch(e){}
+}
+
+function initGoogle(){
+  google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:handleLogin,auto_select:true});
+  const saved=loadSavedUser();
+  if(saved){verifyAndLogin(saved);return;}
+  google.accounts.id.renderButton(document.getElementById('googleBtn'),{theme:'outline',size:'large',locale:'he',width:240});
+  google.accounts.id.prompt();
+}
+
+async function handleLogin(resp){
+  let payload={};
+  try{const parts=resp.credential.split('.');if(parts.length!==3)throw new Error('invalid');payload=JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));}catch(e){return;}
+  const email=(payload.email||'').toLowerCase();
+  if(!email||!email.includes('@'))return;
+  const picture=payload.picture||'';
+  // קח שם מה-allowed_list בשרת — לא מה-JWT (שם JWT לרוב מקושקש בעברית)
+  let displayName='';
+  try{
+    const lr=await fetch(BACKEND+'/allowed_list');
+    const ld=await lr.json();
+    const entries=ld.emails||[];
+    const myEntry=entries.find(e=>typeof e==='object'&&e.email===email);
+    if(myEntry&&myEntry.name&&!myEntry.name.includes('×')&&myEntry.name!==email){
+      displayName=myEntry.name;
+    }
+  }catch(e){}
+  // fallback — email prefix (תמיד ASCII, אף פעם לא מקושקש)
+  if(!displayName||displayName.includes('×'))displayName=email.split('@')[0];
+  const user={email,name:displayName,picture};
+  await verifyAndLogin(user);
+}
+
+/* ── COPY LINK ── */
+function copyMsgLink(id, btn){
+  const el=document.querySelector(`.msg-row[data-id="${id}"]`);
+  if(el)el.id='msg-link-'+id;
+  const url=location.href.split('#')[0]+'#msg-link-'+id;
+  const copy=text=>{
+    navigator.clipboard.writeText(text).catch(()=>{
+      const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0';
+      document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    });
+  };
+  copy(url);
+  btn.classList.add('copied');
+  btn.innerHTML='<i class="fas fa-check" style="font-size:9px"></i>';
+  setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='<i class="fas fa-link" style="font-size:9px"></i>';},1500);
+}
+
+function highlightMsgFromHash(){
+  const hash=location.hash;
+  if(!hash||!hash.startsWith('#msg-link-'))return;
+  const id=hash.replace('#msg-link-','');
+  const el=document.querySelector(`.msg-row[data-id="${id}"]`)||document.getElementById(hash.slice(1));
+  if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  el.style.transition='background .2s';
+  el.style.background='rgba(26,86,219,.08)';
+  el.style.borderRadius='14px';
+  setTimeout(()=>{el.style.background='';el.style.borderRadius='';},2800);
+}
+
+/* ── BUILD MSG ── */
+function buildMsg(e){
+  const red=e.profile==='red';
+  const id=e.id;
+  const lines=(e.text||'').trim().split('\n');
+  const h=lines[0]||'';
+  const body=lines.slice(1).join('\n').trim();
+  let content='';
+  if(red){content=`<div class="bubble-headline">🚨 ${esc(h)}</div>`;if(body)content+=`<div class="bubble-text" style="margin-top:4px">${rich(body)}</div>`;}
+  else{content=`<div class="bubble-text">${rich(h+(body?'\n'+body:''))}</div>`;}
+
+  let media='';
+  if(e.imgUrl){const su=escAttr(e.imgUrl);media+=`<div class="bubble-img"><img src="${su}" loading="lazy" style="cursor:pointer;border-radius:12px;display:block;" onclick="openLightbox('${su}')" onerror="this.closest('.bubble-img').remove()"></div>`;}
+
+  if(e.videoUrl){
+    const vu=e.videoUrl;
+    const ytMatch=vu.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    const driveMatch=vu.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+    const isHlsUrl=vu.includes('.m3u8')||vu.includes('master.m3u8');
+    const isDirectVideo=/\.(mp4|webm|ogg|m3u8)([?#,]|$)/i.test(vu)||isHlsUrl;
+    if(ytMatch){
+      media+=`<div class="bubble-vid" style="margin-top:9px;border-radius:12px;overflow:hidden;">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen style="display:block;"></iframe>
+      </div>`;
+    } else if(driveMatch){
+      media+=`<div class="bubble-vid" style="margin-top:9px;border-radius:12px;overflow:hidden;">
+        <iframe src="https://drive.google.com/file/d/${driveMatch[1]}/preview" width="100%" height="300" frameborder="0" allow="autoplay" allowfullscreen style="display:block;min-height:300px;"></iframe>
+      </div>`;
+    } else if(isDirectVideo){
+      const vidId='vid-'+escAttr(id);
+      const isHls=isHlsUrl;
+      media+=`<div class="bubble-vid" style="margin-top:9px;border-radius:12px;overflow:hidden;width:100%;">
+        <video id="${vidId}" controls playsinline preload="metadata"
+          style="max-height:480px;display:block;border-radius:12px;object-fit:contain;" onloadedmetadata="if(this.videoHeight>this.videoWidth)this.classList.add('portrait')"
+          ${!isHls?`src="${escAttr(vu)}"`:''}
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        </video>
+        <a class="vid-btn" href="${escAttr(vu)}" target="_blank" rel="noopener noreferrer" style="display:none;margin-top:6px;">
+          <i class="fas fa-play" style="font-size:10px"></i> פתח סרטון
+        </a>
+        ${isHls?`<script>
+(function(){
+  var v=document.getElementById('${vidId}');
+  if(!v)return;
+  if(v.canPlayType('application/vnd.apple.mpegurl')){
+    v.src='${vu.replace(/'/g,"\\'")}';
+  } else if(window.Hls&&Hls.isSupported()){
+    var h=new Hls();h.loadSource('${vu.replace(/'/g,"\\'")}');h.attachMedia(v);
+  } else {
+    var s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js';
+    s.onload=function(){
+      if(Hls.isSupported()){var h=new Hls();h.loadSource('${vu.replace(/'/g,"\\'")}');h.attachMedia(v);}
+      else if(v.canPlayType('application/vnd.apple.mpegurl')){v.src='${vu.replace(/'/g,"\\'")}';} 
+    };
+    document.head.appendChild(s);
+  }
+})();
+<\/script>`:''}
+      </div>`;
+    } else {
+      // URL לא מוכר — הצג ב-iframe (עוקף CORS לחלוטין)
+      media+=`<div class="bubble-vid" style="margin-top:9px;border-radius:12px;overflow:hidden;width:100%;background:#000;">
+        <iframe src="${escAttr(vu)}"
+          width="100%" height="300" frameborder="0"
+          allowfullscreen allow="autoplay; fullscreen"
+          style="display:block;border-radius:12px;min-height:300px;"
+          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups">
+        </iframe>
+      </div>`;
+    }
+  }
+
+  let btns='';
+  if(e.buttons&&e.buttons.length)btns='<div class="bubble-btns">'+e.buttons.map(b=>`<a class="lnk-btn" href="${escAttr(b.url)}" target="_blank" rel="noopener noreferrer">${esc(b.text)}</a>`).join('')+'</div>';
+  if(e.htmlCode){
+    // הטמעת HTML מבודד ב-iframe
+    const safeHtml=e.htmlCode.replace(/`/g,'&#96;');
+    media+=`<div class="bubble-html" style="margin-top:9px;border-radius:12px;overflow:hidden;width:100%;">
+      <iframe
+        srcdoc="${safeHtml.replace(/"/g,'&quot;')}"
+        style="width:100%;border:none;border-radius:12px;display:block;"
+        sandbox="allow-scripts allow-popups allow-forms allow-top-navigation-by-user-activation"
+        scrolling="no"
+        onload="(function(f){
+          try{
+            var body=f.contentDocument.body;
+            var html=f.contentDocument.documentElement;
+            var h=Math.max(body.scrollHeight,body.offsetHeight,html.scrollHeight,html.offsetHeight);
+            f.style.height=Math.min(h+24,500)+'px';
+          }catch(e){f.style.height='300px';}
+        })(this)"
+      ></iframe>
+    </div>`;
+  }
+  const n=cmtCount[id]||0;
+  const cmtLabel=n===0?'תגובות':n===1?'1 תגובה':n+' תגובות';
+  const canDel=isAdmin();
+  return `<div class="msg-row" data-id="${escAttr(id)}">
+    <img class="msg-av" src="${LOGO}" onerror="this.style.display='none'">
+    <div class="msg-col">
+      <div class="msg-meta">
+        <span class="msg-meta-name">שאגת הארי</span>
+        <span class="msg-meta-time">${esc(timeLabel(e))}</span>
+        ${e.edited?'<span class="msg-meta-edited">נערכה</span>':''}
+        ${isSuperAdmin()&&e.senderEmail?`<span class="msg-meta-sender">${esc(getDisplayName(e.senderEmail,e.sender||''))}</span>`:''}
+      </div>
+      <div class="bubble-wrap-outer">
+        <div class="bubble-top-actions" id="bta-${escAttr(id)}">
+          <button class="link-btn" id="lnk-${escAttr(id)}" onclick="copyMsgLink('${escAttr(id)}',this)" title="העתק קישור">
+            <i class="fas fa-link" style="font-size:9px"></i>
+          </button>
+          <button class="cmt-btn${n>0?' has-cmt':''}" id="cbtn-${escAttr(id)}" onclick="openComments('${escAttr(id)}')">
+            <i class="fas fa-comment" style="font-size:11px"></i>${n>0?'<span style="font-size:9px;font-weight:800;margin-right:2px">'+(n)+'</span>':''}
+          </button>
+          ${canDel?`
+          <button class="msg-action-btn edit" onclick="openEditMsg('${escAttr(id)}')" title="ערוך">
+            <i class="fas fa-pen" style="font-size:9px"></i>
+          </button>
+          <button class="msg-action-btn quote" onclick="quoteFeedMsg('${escAttr(id)}')" title="ציטוט">
+            <i class="fas fa-quote-right" style="font-size:9px"></i>
+          </button>
+          <button class="msg-action-btn del" onclick="deleteFeedMsg('${escAttr(id)}')" title="מחק">
+            <i class="fas fa-trash" style="font-size:9px"></i>
+          </button>`:''}
+        </div>
+        <div class="bubble${red?' is-red':''}">
+          ${content}${media}${btns}
+        </div>
+      </div>
+      <div class="bubble-foot">
+        <div class="rxn-row" id="rxn-${escAttr(id)}">
+          <button class="rxn-add-btn" onclick="openPicker(event,'${escAttr(id)}')" title="הוסף תגובה">${REACT_SVG}</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function jumpToQuotedMsg(id){
+  const el=document.querySelector(`.msg-row[data-id="${id}"]`);
+  if(!el){return;}
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  el.style.transition='background .2s';
+  el.style.background='rgba(26,86,219,.07)';
+  el.style.borderRadius='14px';
+  setTimeout(()=>{el.style.background='';el.style.borderRadius='';},2000);
+}
+
+function quoteFeedMsg(id){
+  if(!isAdmin())return;
+  const entry=items.find(e=>e.id===id);
+  if(!entry)return;
+  const ed=document.getElementById('composeEditor');
+  const rawText=(entry.text||'').trim();
+  const lines=rawText.split('\n');
+  const preview=lines.slice(0,2).join(' ').substring(0,100)+(rawText.length>100?'…':'');
+  ed._quoteData={id, text:rawText, preview};
+  ed.innerHTML='';
+  const qDiv=document.createElement('div');
+  qDiv.setAttribute('data-quote-preview','1');
+  qDiv.contentEditable='false';
+  qDiv.style.cssText='background:#f3f4f6;border-right:3px solid #9ca3af;border-radius:8px;padding:7px 10px;margin-bottom:6px;color:#6b7280;font-size:13px;font-style:italic;cursor:default;user-select:none;display:flex;align-items:center;gap:6px;';
+  qDiv.innerHTML=`<i class="fas fa-quote-right" style="font-size:10px;opacity:.5;flex-shrink:0;"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(preview)}</span><button onclick="cancelQuote()" style="margin-right:auto;background:none;border:none;cursor:pointer;color:#aaa;font-size:12px;padding:0;line-height:1;flex-shrink:0;">✕</button>`;
+  ed.appendChild(qDiv);
+  const cursor=document.createElement('div');
+  cursor.innerHTML='<br>';
+  ed.appendChild(cursor);
+  ed.focus();
+  const range=document.createRange();
+  range.setStart(cursor,0);
+  range.collapse(true);
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(range);
+  document.getElementById('adminComposeBar')?.scrollIntoView({behavior:'smooth',block:'end'});
+  onComposeChange();
+}
+
+function cancelQuote(){
+  const ed=document.getElementById('composeEditor');
+  ed.querySelector('[data-quote-preview]')?.remove();
+  ed._quoteData=null;
+  onComposeChange();
+}
+
+async function deleteFeedMsg(id){
+  if(!me||!isAdmin())return;
+  if(!confirm('למחוק הודעה זו מהפיד?'))return;
+  try{
+    const r=await fetch(BACKEND+'/feed_delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email,id})});
+    const d=await r.json();
+    if(d.status==='ok'){
+      items=items.filter(e=>e.id!==id);
+      knownIds.delete(id);
+      document.querySelector(`.msg-row[data-id="${id}"]`)?.remove();
+    }
+  }catch(e){}
+}
+
+function renderRxn(msgId,rxns){rxnCache[msgId]=rxns;
+  const bar=document.getElementById('rxn-'+msgId);
+  if(!bar)return;
+  const addBtn=bar.querySelector('.rxn-add-btn');
+  bar.innerHTML='';
+  const activeTypes=Object.entries(rxns).filter(([,users])=>users.length);
+  activeTypes.forEach(([emoji,users])=>{
+    const mine=users.includes(me?.email);
+    const c=document.createElement('button');
+    c.className='rxn-chip'+(mine?' mine':'');
+    c.innerHTML=`<span class="rxn-emoji">${esc(emoji)}</span><span class="rxn-count">${users.length}</span>`;
+    c.onclick=()=>doReact(msgId,emoji);
+    bar.appendChild(c);
+  });
+  if(addBtn){addBtn.classList.toggle('maxed',activeTypes.length>=5);bar.appendChild(addBtn);}
+  else{
+    const b=document.createElement('button');
+    b.className='rxn-add-btn'+(activeTypes.length>=5?' maxed':'');
+    b.innerHTML=REACT_SVG;
+    b.onclick=(ev)=>openPicker(ev,msgId);
+    bar.appendChild(b);
+  }
+}
+
+function openPicker(ev,msgId){
+  ev.stopPropagation();activePicker=msgId;
+  const p=document.getElementById('emojiPicker');
+  // מדוד — מציג זמנית כדי לקבל גודל
+  p.style.visibility='hidden';p.style.display='grid';
+  const pH=p.offsetHeight,pW=p.offsetWidth;
+  p.style.display='';p.style.visibility=''; // אפס inline style — תן ל-CSS לשלוט
+  const rect=ev.currentTarget.getBoundingClientRect();
+  const M=8;
+  let top=rect.top-pH-M;
+  if(top<56+M)top=rect.bottom+M;
+  top=Math.max(56+M,top);
+  let left=rect.right-pW;
+  if(left<M)left=M;
+  if(left+pW>window.innerWidth-M)left=window.innerWidth-pW-M;
+  p.style.top=top+'px';p.style.left=left+'px';
+  p.classList.add('show');
+}
+
+function pickEmoji(em){document.getElementById('emojiPicker').classList.remove('show');if(activePicker)doReact(activePicker,em);activePicker=null;}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#mentionDropdown')&&!e.target.closest('#chatInput'))hideMentionDrop();
+  if(!e.target.closest('#emojiPicker')&&!e.target.closest('.rxn-add-btn'))document.getElementById('emojiPicker').classList.remove('show');
+  if(!e.target.closest('.ctb-dropdown')&&!e.target.closest('.ctb-dropdown-wrap'))closeAllCtbDropdowns();
+});
+
+async function doReact(msgId,emoji){
+  if(!me)return;
+  if(typeof emoji!=='string'||emoji.length>MAX_EMOJI_LEN)return;
+  const current=rxnCache[msgId]||{};
+  const activeTypes=Object.entries(current).filter(([,u])=>u.length);
+  const isNewType=!(emoji in current);
+  if(isNewType&&activeTypes.length>=5)return;
+  const users=[...(current[emoji]||[])];
+  const myIdx=users.indexOf(me.email);
+  if(myIdx>=0)users.splice(myIdx,1);else users.push(me.email);
+  const optimistic={...current};
+  if(users.length)optimistic[emoji]=users;else delete optimistic[emoji];
+  renderRxn(msgId,optimistic);
+  try{
+    const r=await fetch(BACKEND+'/feed_react',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email,msgId,emoji})});
+    const d=await r.json();
+    if(d.status==='ok')renderRxn(msgId,d.reactions);
+  }catch(e){}
+}
+
+/* ── COMMENTS ── */
+function openComments(msgId){activeCmtMsgId=msgId;document.getElementById('commentsPanel').classList.add('open');loadComments(msgId);}
+function closeComments(){document.getElementById('commentsPanel').classList.remove('open');activeCmtMsgId=null;}
+
+async function loadComments(msgId){
+  const b=document.getElementById('cpBody');
+  const cached=b.dataset.msgId===msgId;
+  if(!cached)b.innerHTML='<div class="cp-spinner"><div class="cp-spinner-ring"></div>טוען...</div>';
+  b.dataset.msgId=msgId;
+  try{
+    const r=await fetch(BACKEND+'/feed_comments?msgId='+encodeURIComponent(msgId));
+    const d=await r.json();
+    const list=d.comments||[];
+    cmtCount[msgId]=list.length;updateCmtBtn(msgId,list.length);
+    const wasAtBottom=(b.scrollHeight-b.scrollTop-b.clientHeight)<60;
+    b.innerHTML=list.length?list.map(c=>buildCmt(msgId,c)).join(''):'<div class="no-cmt">עדיין אין תגובות</div>';
+    if(wasAtBottom||!cached)b.scrollTop=b.scrollHeight;
+  }catch(e){b.innerHTML='<div class="no-cmt">שגיאה</div>';}
+}
+
+function buildCmt(msgId,c){
+  const canDelete=isSuperAdmin()||(c.email===me?.email);
+  const av=c.picture?`<img class="ci-av" src="${escAttr(c.picture)}" onerror="this.parentNode.innerHTML='<div class=ci-av-i>${esc((c.name||'?')[0].toUpperCase())}</div>'">`:`<div class="ci-av-i">${esc((c.name||'?')[0].toUpperCase())}</div>`;
+  return `<div class="ci" id="ci-${escAttr(c.id)}">${av}<div class="ci-bubble"><div class="ci-text">${esc(c.text)}</div><div class="ci-time">${esc(fixServerTime(c.time||''))}</div>${canDelete?`<button class="ci-del" onclick="delCmt('${escAttr(msgId)}','${escAttr(c.id)}')"><i class="fas fa-times"></i></button>`:''}</div></div>`;
+}
+
+function updateCmtBtn(msgId,n){
+  const btn=document.getElementById('cbtn-'+msgId);if(!btn)return;
+  btn.className='cmt-btn'+(n>0?' has-cmt':'');
+  btn.innerHTML=`<i class="fas fa-comment" style="font-size:11px"></i>${n>0?`<span style="font-size:9px;font-weight:800;margin-right:2px">${n}</span>`:''}`;
+}
+
+async function sendComment(){
+  const inp=document.getElementById('cpInp');const text=inp.value.trim();
+  if(!text||!me||!activeCmtMsgId)return;
+  if(text.length>MAX_COMMENT_LEN){alert('תגובה ארוכה מדי');return;}
+  inp.value='';inp.style.height='auto';
+  try{
+    const r=await fetch(BACKEND+'/feed_comment_add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email,name:me.name,picture:me.picture,msgId:activeCmtMsgId,text})});
+    const d=await r.json();
+    if(d.status==='ok'){
+      const b=document.getElementById('cpBody');b.querySelector('.no-cmt')?.remove();
+      const div=document.createElement('div');div.innerHTML=buildCmt(activeCmtMsgId,d.comment);b.appendChild(div.firstChild);b.scrollTop=b.scrollHeight;
+      cmtCount[activeCmtMsgId]=(cmtCount[activeCmtMsgId]||0)+1;updateCmtBtn(activeCmtMsgId,cmtCount[activeCmtMsgId]);
+    }
+  }catch(e){}
+}
+
+async function delCmt(msgId,cid){
+  if(!me)return;
+  try{
+    const r=await fetch(BACKEND+'/feed_comment_delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email,msgId,commentId:cid})});
+    const d=await r.json();
+    if(d.status==='ok'){document.getElementById('ci-'+cid)?.remove();cmtCount[msgId]=Math.max(0,(cmtCount[msgId]||1)-1);updateCmtBtn(msgId,cmtCount[msgId]);if(!document.querySelector('#cpBody .ci'))document.getElementById('cpBody').innerHTML='<div class="no-cmt">עדיין אין תגובות</div>';}
+  }catch(e){}
+}
+
+/* ── FEED ── */
+// ─── last-visit timestamp (per user, for unread divider) ───
+let _lastVisitTs = 0;
+function _saveLastVisitTs(){
+  if(!me||!lastTs)return;
+  localStorage.setItem('shaagat_visit_'+me.email, String(lastTs));
+}
+function _loadLastVisitTs(){
+  if(!me)return 0;
+  return parseInt(localStorage.getItem('shaagat_visit_'+me.email)||'0',10);
+}
+window.addEventListener('pagehide',_saveLastVisitTs);
+window.addEventListener('beforeunload',_saveLastVisitTs);
+
+async function loadFeed(){
+  _lastVisitTs = _loadLastVisitTs();
+  setLoading(true);
+  try{
+    // ── טען דף ראשון ──
+    const r=await fetch(BACKEND+'/feed?limit=20');
+    const d=await r.json();
+    if(d.status==='ok'){
+      let allPages=[...d.feed].reverse(); // ישן→חדש
+      allPages.forEach(e=>knownIds.add(e.id));
+      allLoaded=d.feed.length<20;
+      oldestTs=allPages.length?Math.min(...allPages.map(e=>e.ts||Infinity)):0;
+
+      // ── אם יש lastVisitTs וכל ההודעות חדשות ממנו — טען עוד דפים (data בלבד) ──
+      if(_lastVisitTs && allPages.length && allPages[0].ts > _lastVisitTs){
+        for(let i=0;i<5&&!allLoaded;i++){
+          try{
+            const rp=await fetch(BACKEND+`/feed?before=${oldestTs}&limit=20`);
+            const dp=await rp.json();
+            if(dp.status==='ok'&&dp.feed.length){
+              const older=dp.feed.filter(e=>!knownIds.has(e.id)).reverse();
+              older.forEach(e=>knownIds.add(e.id));
+              allPages=[...older,...allPages];
+              oldestTs=Math.min(...older.map(e=>e.ts||Infinity));
+              allLoaded=dp.feed.length<20;
+              if(allPages[0].ts <= _lastVisitTs) break; // מצאנו גבול
+            }else{allLoaded=true;break;}
+          }catch(e){break;}
+        }
+      }
+
+      items=allPages;
+      lastTs=items.length?Math.max(...items.map(e=>e.ts||0)):0;
+
+      // ── רנדר הכל בבת אחת ──
+      const inner=document.getElementById('feedInner');
+      inner.innerHTML='';
+      if(!items.length){document.getElementById('empty').style.display='block';}
+      else{inner.innerHTML=items.map(buildMsg).join('');}
+
+      // ── הכנס קו לא-נקראו בתוך ה-DOM שכבר רונדר ──
+      let scrollTarget=null;
+      if(_lastVisitTs&&items.length){
+        const firstUnreadIdx=items.findIndex(e=>(e.ts||0)>_lastVisitTs);
+        if(firstUnreadIdx>0){
+          const row=document.querySelector(`.msg-row[data-id="${items[firstUnreadIdx].id}"]`);
+          if(row){
+            document.getElementById('unreadSep')?.remove();
+            const sep=document.createElement('div');
+            sep.id='unreadSep';sep.className='unread-sep';
+            sep.innerHTML='<span>לא נקראו</span>';
+            row.parentNode.insertBefore(sep,row);
+            scrollTarget=sep;
+          }
+        }
+      }
+
+      // ── גלול ──
+      const wrap=document.getElementById('feedWrap');
+      if(scrollTarget){
+        wrap.scrollTop=0; // אפס קודם כדי ש-scrollIntoView יעבוד נכון
+        setTimeout(()=>scrollTarget.scrollIntoView({behavior:'auto',block:'start'}),50);
+      }else{
+        wrap.scrollTop=wrap.scrollHeight;
+      }
+
+      if(items.length)await pollAll(true);
+      setTimeout(highlightMsgFromHash,500);
+    }
+  }catch(e){}
+  setLoading(false);
+}
+
+async function loadMore(){
+  if(loadingMore||allLoaded||!oldestTs)return;
+  loadingMore=true;document.getElementById('loadMoreSpinner').classList.add('show');
+  try{
+    const r=await fetch(BACKEND+`/feed?before=${oldestTs}&limit=20`);
+    const d=await r.json();
+    if(d.status==='ok'&&d.feed.length){
+      const older=d.feed.filter(e=>!knownIds.has(e.id)).reverse();
+      if(!older.length){allLoaded=true;}
+      else{
+        older.forEach(e=>{knownIds.add(e.id);items.unshift(e);});
+        oldestTs=Math.min(...older.map(e=>e.ts||Infinity));
+        allLoaded=older.length<20;
+        const inner=document.getElementById('feedInner');const wrap=document.getElementById('feedWrap');
+        const prevHeight=wrap.scrollHeight;const prevTop=wrap.scrollTop;
+        inner.insertAdjacentHTML('afterbegin',older.map(buildMsg).join(''));
+        wrap.scrollTop=prevTop+(wrap.scrollHeight-prevHeight);
+        if(older.length)setTimeout(pollAll,100);
+      }
+    }else{allLoaded=true;}
+  }catch(e){}finally{loadingMore=false;document.getElementById('loadMoreSpinner').classList.remove('show');}
+}
+
+async function pollAll(){if(!me||!items.length)return;
+  pollPending=true;
+  try{
+    const r=await fetch(BACKEND+'/feed_poll',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msgIds:items.map(e=>e.id),since:lastTs})});
+    const d=await r.json();if(d.status!=='ok')return;
+    const newRaw=d.new_items||[];
+    const ni=newRaw.filter(e=>!knownIds.has(e.id));
+    if(ni.length){
+      lastTs=Math.max(...newRaw.map(e=>e.ts||0),lastTs);
+      ni.forEach(e=>knownIds.add(e.id));items.push(...ni);
+      const inner=document.getElementById('feedInner');document.getElementById('empty').style.display='none';
+      ni.forEach(e=>{const div=document.createElement('div');div.innerHTML=buildMsg(e);inner.appendChild(div.firstChild);});
+      if(atBottom)document.getElementById('feedWrap').scrollTop=999999;
+      else{newCount+=ni.length;updateScrollBtn();}
+      if(ni.length)sendNotification('שאגת הארי — הודעה חדשה',ni[ni.length-1].text?.substring(0,60)||'');
+    }else if(newRaw.length){lastTs=Math.max(...newRaw.map(e=>e.ts||0),lastTs);}
+    const serverIds=new Set(d.active_ids||[]);
+    if(serverIds.size>0){
+      const toRemove=items.filter(e=>!serverIds.has(e.id));
+      toRemove.forEach(e=>{
+        items=items.filter(i=>i.id!==e.id);
+        knownIds.delete(e.id);
+        document.querySelector(`.msg-row[data-id="${e.id}"]`)?.remove();
+      });
+      if(!items.length)document.getElementById('empty').style.display='block';
+    }
+    const rxns=d.reactions||{};Object.entries(rxns).forEach(([mid,rxn])=>renderRxn(mid,rxn));
+    const counts=d.comment_counts||{};Object.entries(counts).forEach(([mid,n])=>{if(n!==(cmtCount[mid]||0)){cmtCount[mid]=n;updateCmtBtn(mid,n);}});
+    // עדכון עריכות
+    const edited=d.edited_items||[];
+    edited.forEach(entry=>{
+      const idx=items.findIndex(i=>i.id===entry.id);
+      if(idx<0)return;
+      const existing=items[idx];
+      // דלג אם כבר עדכנו את הגרסה הזו
+      if(existing.edit_ts&&existing.edit_ts>=entry.edit_ts)return;
+      items[idx]=entry;
+      const row=document.querySelector(`.msg-row[data-id="${entry.id}"]`);
+      if(row){
+        const nd=document.createElement('div');
+        nd.innerHTML=buildMsg(entry);
+        row.replaceWith(nd.firstChild);
+        // שחזר תגובות
+        if(rxnCache[entry.id])renderRxn(entry.id,rxnCache[entry.id]);
+      }
+    });
+  }catch(e){}finally{pollPending=false;}
+}
+
+
+function scrollToBottom(){document.getElementById('feedWrap').scrollTo({top:999999,behavior:'smooth'});newCount=0;updateScrollBtn();}
+function updateScrollBtn(){
+  const btn=document.getElementById('scrollDownBtn');
+  if(!atBottom){btn.classList.add('show');if(newCount>0)btn.classList.add('has-new');else btn.classList.remove('has-new');}
+  else{btn.classList.remove('show','has-new');newCount=0;}
+}
+function updateComposeHeight(){
+  const bar=document.getElementById('adminComposeBar');
+  if(bar&&bar.classList.contains('show')){
+    document.documentElement.style.setProperty('--compose-h', bar.offsetHeight+'px');
+    document.body.classList.add('has-compose');
+  }else{
+    document.body.classList.remove('has-compose');
+  }
+}
+const _composeObserver=new ResizeObserver(updateComposeHeight);
+const _composeEl=document.getElementById('adminComposeBar');
+if(_composeEl)_composeObserver.observe(_composeEl);
+
+document.getElementById('feedWrap').addEventListener('scroll',function(){
+  atBottom=(this.scrollHeight-this.scrollTop-this.clientHeight)<80;updateScrollBtn();
+  if(this.scrollTop<120&&!loadingMore&&!allLoaded)loadMore();
+},{passive:true});
+
+function setLoading(v){document.getElementById('prog').classList.toggle('on',v);}
+
+/* ══ WRITE PERMISSION SYSTEM ══ */
+let _writePerm=null;
+let _writePermPending=false;
+
+/* ══ UPDATE MODE ══ */
+let _updateMode=false;
+let _updateUntil='';
+
+function onUpdateModeHdrClick(e){
+  e.stopPropagation();
+  if(isSuperAdmin()){
+    // סופר אדמין — הצג popover של מי מעדכן
+    const pop=document.getElementById('updateModePopover');
+    if(!pop)return;
+    const isOpen=pop.classList.contains('open');
+    // סגור dropdowns אחרים
+    closeAllCtbDropdowns();
+    document.getElementById('writePermDropdown').style.display='none';
+    if(!isOpen) pop.classList.add('open');
+    else pop.classList.remove('open');
+  } else {
+    toggleUpdateMode();
+  }
+}
+
+function closeUpdateModePopover(){
+  document.getElementById('updateModePopover')?.classList.remove('open');
+}
+
+function openUpdateTimeDialog(){
+  // הצע שעה נוכחית + שעה קדימה כברירת מחדל
+  const now=new Date();
+  now.setHours(now.getHours()+1,0,0,0);
+  const h=String(now.getHours()).padStart(2,'0');
+  const inp=document.getElementById('updateTimeInput');
+  if(inp)inp.value=h+':00';
+  document.getElementById('updateTimeDialog').classList.add('open');
+  setTimeout(()=>inp?.focus(),100);
+}
+
+function closeUpdateTimeDialog(){
+  document.getElementById('updateTimeDialog').classList.remove('open');
+}
+
+function confirmUpdateTime(){
+  const inp=document.getElementById('updateTimeInput');
+  const val=(inp?.value||'').trim();
+  if(!val){alert('נא לבחור שעה');return;}
+  _updateMode=true;
+  _updateUntil=val;
+  closeUpdateTimeDialog();
+  applyUpdateModeUI();
+  saveUpdateModeToServer(true,val);
+}
+
+function toggleUpdateMode(){
+  if(_updateMode){
+    _updateMode=false;
+    _updateUntil='';
+    applyUpdateModeUI();
+    saveUpdateModeToServer(false,'');
+  } else {
+    openUpdateTimeDialog();
+  }
+}
+
+function applyUpdateModeUI(){
+  const btn=document.getElementById('updateModeBtn');
+  const bar=document.getElementById('updateModeBar');
+  const hdrBtn=document.getElementById('updateModeHdrBtn');
+  const notice=document.getElementById('updateModeNotice');
+  if(btn&&bar){
+    if(_updateMode){
+      btn.className='update-mode-btn on';
+      btn.innerHTML='<i class="fas fa-check" style="font-size:9px"></i> מעדכן'
+        +(_updateUntil?` עד ${_updateUntil}`:'');
+    } else {
+      btn.className='update-mode-btn off';
+      btn.innerHTML='<i class="fas fa-times" style="font-size:9px"></i> לא מעדכן';
+    }
+    const whoEl=document.getElementById('updateModeWho');
+    if(whoEl)whoEl.textContent='';
+  }
+  if(hdrBtn){
+    if(_updateMode){
+      hdrBtn.classList.add('is-on');
+      hdrBtn.title='מעדכן'+(_updateUntil?' עד '+_updateUntil:'')+' — לחץ לסיום';
+    } else {
+      hdrBtn.classList.remove('is-on');
+      hdrBtn.title='לא מעדכן — לחץ להפעלה';
+    }
+  }
+  // הצג/הסתר הודעה ליד כפתור שליחה (לא super admin)
+  if(notice&&!isSuperAdmin()){
+    notice.classList.toggle('show',!_updateMode);
+  }
+}
+
+async function saveUpdateModeToServer(active,until){
+  try{
+    await fetch(BACKEND+'/update_mode_set',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:me.email,name:getDisplayName(me.email,me.name),active,until})});
+  }catch(e){}
+}
+
+// בודק אם שעת "עד מתי" עברה כבר (לפי שעון הלקוח)
+function isUntilExpired(until){
+  if(!until)return false;
+  const m=until.match(/^(\d{1,2}):(\d{2})$/);
+  if(!m)return false;
+  const now=new Date();
+  const endH=parseInt(m[1],10), endM=parseInt(m[2],10);
+  const endMinutes=endH*60+endM;
+  const nowMinutes=now.getHours()*60+now.getMinutes();
+  return nowMinutes>endMinutes;
+}
+
+async function pollUpdateMode(){
+  if(!isAdmin())return;
+  try{
+    const r=await fetch(BACKEND+'/update_mode_get');
+    const d=await r.json();
+    const bar=document.getElementById('updateModeBar');
+    if(bar)bar.classList.remove('show');
+    const hdrBtn=document.getElementById('updateModeHdrBtn');
+    if(hdrBtn)hdrBtn.style.display='inline-flex';
+
+    // בדוק אם המצב שלי פג תוקף — כבה אוטומטית
+    if(_updateMode && isUntilExpired(_updateUntil)){
+      _updateMode=false;
+      _updateUntil='';
+      applyUpdateModeUI();
+      saveUpdateModeToServer(false,'');
+    }
+
+    // שחזר מצב שמור (רק אם עדיין לא מעודכן מקומית ועדיין לא פג תוקף)
+    const myEntry=(d.updaters||[]).find(u=>u.email===me?.email?.toLowerCase());
+    if(myEntry&&!_updateMode){
+      const expired=isUntilExpired(myEntry.until);
+      if(myEntry.active && expired){
+        // פג תוקף בשרת — כבה
+        saveUpdateModeToServer(false,'');
+      } else {
+        _updateMode=myEntry.active;
+        _updateUntil=myEntry.until||'';
+        applyUpdateModeUI();
+      }
+    }
+
+    // למנהל ראשי — עדכן popover וצבע כפתור
+    if(isSuperAdmin()){
+      const allActive=(d.updaters||[]).filter(u=>
+        u.active && u.email!==me?.email?.toLowerCase() && !isUntilExpired(u.until)
+      );
+      const body=document.getElementById('updateModePopoverBody');
+      if(body){
+        if(allActive.length){
+          body.innerHTML=allActive.map(u=>`
+            <div class="ump-row">
+              <div class="ump-dot"></div>
+              <span>${u.name||u.email}${u.until?' — עד '+u.until:''}</span>
+            </div>`).join('');
+        } else {
+          body.innerHTML='<div class="ump-empty">אין מעדכנים פעילים כרגע</div>';
+        }
+      }
+      // צבע כפתור
+      if(hdrBtn){
+        hdrBtn.classList.remove('has-active','no-active');
+        hdrBtn.classList.add(allActive.length?'has-active':'no-active');
+        hdrBtn.title=allActive.length
+          ?'מעדכנים: '+allActive.map(u=>u.name+(u.until?' עד '+u.until:'')).join(', ')
+          :'אין מעדכנים פעילים כרגע';
+      }
+    }
+
+    // חסום שליחה אם לא במצב מעדכן (לא super admin)
+    if(!isSuperAdmin()){
+      const canSend=_updateMode;
+      const sendBtn=document.getElementById('composeSendBtn');
+      if(sendBtn){
+        sendBtn.disabled=!canSend;
+        sendBtn.style.opacity=canSend?'1':'0.4';
+        sendBtn.title=canSend?'שלח':'עליך להפעיל מצב מעדכן לפני שליחה';
+      }
+    }
+  }catch(e){}
+}
+
+async function pollWritePerm(){
+  if(!isAdmin()||_writePermPending)return;
+  _writePermPending=true;
+  try{
+    const r=await fetch(BACKEND+'/write_perm_get');
+    const d=await r.json();
+    if(d.status==='ok')applyWritePerm(d.perm);
+  }catch(e){}finally{_writePermPending=false;}
+}
+
+function applyWritePerm(perm){
+  _writePerm=perm;
+  const grantedEmails=perm?.emails||[];
+  const bar=document.getElementById('adminComposeBar');
+  const notice=document.getElementById('blockNotice');
+  const btn=document.getElementById('writePermBtn');
+  if(!bar)return;
+  // david — לעולם לא blocked
+  if(isSuperAdmin()){
+    bar.classList.remove('blocked');
+    notice.classList.remove('show');
+    if(btn)btn.classList.toggle('has-granted',grantedEmails.length>0);
+    const dd=document.getElementById('writePermDropdown');
+    if(dd&&dd.style.display==='block') renderWritePermDropdown(grantedEmails);
+    return;
+  }
+  if(btn)btn.classList.toggle('has-granted',grantedEmails.length>0);
+  const hasPermission=grantedEmails.includes(me?.email||'');
+  bar.classList.toggle('blocked',!hasPermission);
+  notice.classList.toggle('show',!hasPermission);
+  if(!hasPermission){
+    notice.textContent='✋ אין לך הרשאת כתיבה כרגע — המתן ל-david להעניק הרשאה';
+  }
+}
+
+async function toggleWritePerm(targetEmail,e){
+  if(e)e.stopPropagation();
+  if(!isSuperAdmin())return;
+  const grantedEmails=_writePerm?.emails||[];
+  const grant=!grantedEmails.includes(targetEmail);
+  try{
+    const r=await fetch(BACKEND+'/write_perm_set',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({requester:me.email,target:targetEmail,grant})});
+    const d=await r.json();
+    if(d.status==='ok')applyWritePerm(d.perm);
+  }catch(e){}
+}
+
+function toggleWritePermDropdown(e){
+  if(e)e.stopPropagation();
+  const dd=document.getElementById('writePermDropdown');
+  if(dd.style.display==='block'){
+    dd.style.display='none';
+  } else {
+    renderWritePermDropdown(_writePerm?.emails||[]);
+    dd.style.display='block';
+  }
+}
+
+document.addEventListener('click',function(e){
+  const dd=document.getElementById('writePermDropdown');
+  const btn=document.getElementById('writePermBtn');
+  if(dd&&dd.style.display==='block'&&!dd.contains(e.target)&&e.target!==btn&&!btn?.contains(e.target)){
+    dd.style.display='none';
+  }
+  // סגור update mode popover בלחיצה מחוץ
+  const pop=document.getElementById('updateModePopover');
+  const hdrBtn=document.getElementById('updateModeHdrBtn');
+  if(pop&&pop.classList.contains('open')&&!pop.contains(e.target)&&!hdrBtn?.contains(e.target)){
+    pop.classList.remove('open');
+  }
+});
+
+// Enter ב-dialog השעה
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&document.getElementById('updateTimeDialog')?.classList.contains('open')){
+    confirmUpdateTime();
+  }
+  if(e.key==='Escape'&&document.getElementById('updateTimeDialog')?.classList.contains('open')){
+    closeUpdateTimeDialog();
+  }
+});
+
+function renderWritePermDropdown(grantedEmails){
+  const list=document.getElementById('writePermList');
+  if(!list)return;
+  const admins=Object.entries(_allowedMap).filter(([email])=>email!==ADMIN_EMAIL.toLowerCase());
+  if(!admins.length){
+    list.innerHTML='<div style="padding:12px 6px;text-align:center;color:#aaa;font-size:12px;">אין מנהלים משניים</div>';
+    return;
+  }
+  list.innerHTML=admins.map(([email,info])=>{
+    const isGranted=grantedEmails.includes(email);
+    const pic=info.picture||'';
+    const initials=(info.name||email)[0].toUpperCase();
+    const bg=chatCol(info.name||email);
+    const av=pic
+      ?`<img src="${escAttr(pic)}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.style.display='none'">`
+      :`<div style="width:30px;height:30px;border-radius:50%;background:${bg};color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>`;
+    return `<div onclick="toggleWritePerm('${escAttr(email)}',event)" style="
+      display:flex;align-items:center;gap:9px;padding:7px 8px;
+      border-radius:10px;cursor:pointer;
+      background:${isGranted?'#eff6ff':'transparent'};
+      border:1.5px solid ${isGranted?'#bfdbfe':'transparent'};
+      transition:background .12s,border-color .12s;
+    " onmouseover="this.style.background='${isGranted?'#dbeafe':'#f3f4f6'}'" onmouseout="this.style.background='${isGranted?'#eff6ff':'transparent'}'">
+      ${av}
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:800;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(info.name||email)}</div>
+        <div style="font-size:10px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(email)}</div>
+      </div>
+      <div style="width:18px;height:18px;border-radius:50%;border:2px solid ${isGranted?'#1a56db':'#d1d5db'};background:${isGranted?'#1a56db':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;">
+        ${isGranted?'<i class="fas fa-check" style="font-size:8px;color:#fff;"></i>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.addEventListener('load',()=>{
+  if(window.google?.accounts)initGoogle();
+  else document.querySelector('script[src*="gsi"]').addEventListener('load',initGoogle);
+});
+
+/* ══ ADMIN COMPOSE BAR ══ */
+
+function toggleComposeProfile(){
+  composeProfile=composeProfile==='news'?'red':'news';
+  const t=document.getElementById('profileToggle');
+  const lbl=document.getElementById('profileLabel');
+  const icon=document.getElementById('profileIcon');
+  const btn=document.getElementById('composeSendBtn');
+  if(composeProfile==='red'){
+    t.classList.add('red');lbl.textContent='צבע אדום';icon.className='fas fa-exclamation-triangle';
+    btn.classList.add('red');
+  }else{
+    t.classList.remove('red');lbl.textContent='מבזק חדשות';icon.className='fas fa-newspaper';
+    btn.classList.remove('red');
+  }
+}
+
+function composeDragOver(e){
+  const items=[...(e.dataTransfer?.items||[])];
+  const hasImg=items.some(i=>i.kind==='file'&&i.type.startsWith('image/'));
+  const hasVid=items.some(i=>i.kind==='file'&&i.type.startsWith('video/'));
+  if(hasImg||hasVid){
+    e.preventDefault();e.dataTransfer.dropEffect='copy';
+    e.currentTarget.style.borderColor=hasVid?'#7c3aed':'#1a56db';
+    e.currentTarget.style.background=hasVid?'#faf5ff':'#f0f6ff';
+  }
+}
+function composeDragLeave(e){
+  if(!e.currentTarget.contains(e.relatedTarget)){e.currentTarget.style.borderColor='';e.currentTarget.style.background='';}
+}
+async function composeDrop(e){
+  e.preventDefault();
+  e.currentTarget.style.borderColor='';e.currentTarget.style.background='';
+  const files=[...(e.dataTransfer?.files||[])];
+  const img=files.find(f=>f.type.startsWith('image/'));
+  const vid=files.find(f=>f.type.startsWith('video/'));
+  if(img)await uploadComposeImg(img);
+  else if(vid){
+    if(isSuperAdmin())await uploadVidToDrive(vid);
+    else{const url=URL.createObjectURL(vid);composeVidUrl=url;document.getElementById('composeVidUrl').value=url;updateAttachPreview();}
+  }
+}
+async function composePaste(e){
+  const items=[...(e.clipboardData?.items||[])];
+  const imgItem=items.find(i=>i.type.startsWith('image/'));
+  const vidItem=items.find(i=>i.type.startsWith('video/'));
+  if(!imgItem&&!vidItem)return;
+  e.preventDefault();
+  if(imgItem){
+    const file=imgItem.getAsFile();
+    if(file)await uploadComposeImg(file);
+  } else if(vidItem){
+    const file=vidItem.getAsFile();
+    if(!file)return;
+    if(isSuperAdmin())await uploadVidToDrive(file);
+    else{const url=URL.createObjectURL(file);composeVidUrl=url;document.getElementById('composeVidUrl').value=url;updateAttachPreview();}
+  }
+}
+
+function applyHtmlCode(){
+  const ta=document.getElementById('composeHtmlCode');
+  if(!ta||!ta.value.trim()){return;}
+  composeHtmlCode=ta.value.trim();
+  const badge=document.getElementById('htmlPreviewBadge');
+  if(badge)badge.style.display='flex';
+  updateAttachPreview();
+  closeAllCtbDropdowns();
+}
+
+function clearHtmlCode(){
+  composeHtmlCode='';
+  const ta=document.getElementById('composeHtmlCode');if(ta)ta.value='';
+  const badge=document.getElementById('htmlPreviewBadge');if(badge)badge.style.display='none';
+  updateAttachPreview();
+}
+
+function insertHeading(){
+  const ed=document.getElementById('composeEditor');
+  ed.focus();
+
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount)return;
+  const range=sel.getRangeAt(0);
+
+  let node=range.startContainer;
+  let offset=range.startOffset;
+
+  if(node===ed){
+    const children=ed.childNodes;
+    if(children.length>0){node=children[children.length-1];offset=node.textContent?.length||0;}
+    else{ed.innerHTML='<br>';onComposeChange();return;}
+  }
+
+  if(node.nodeType!==Node.TEXT_NODE){
+    if(node.childNodes[offset-1]){node=node.childNodes[offset-1];offset=node.textContent?.length||0;}
+    else if(node.firstChild){node=node.firstChild;offset=0;}
+  }
+
+  if(node.nodeType===Node.TEXT_NODE){
+    const text=node.textContent;
+    const before=text.substring(0,offset);
+    const after=text.substring(offset);
+    const lastNL=before.lastIndexOf('\n');
+    const lineStart=lastNL>=0?lastNL+1:0;
+    const lineText=before.substring(lineStart);
+
+    // ✅ התיקון: • בתוך ה-** של ההדגשה
+    const newBefore=before.substring(0,lineStart)+(lineText?'**'+lineText+' •**':'**•**');
+    node.textContent=newBefore+after;
+
+    const newRange=document.createRange();
+    newRange.setStart(node,newBefore.length);
+    newRange.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+  } else {
+    document.execCommand('insertText',false,' •');
+  }
+
+  onComposeChange();
+}
+
+function composeFormat(cmd){
+  const ed=document.getElementById('composeEditor');
+  ed.focus();
+  requestAnimationFrame(()=>{
+    document.execCommand(cmd,false,null);
+    onComposeChange();
+  });
+}
+
+function onComposeChange(){
+  const ed=document.getElementById('composeEditor');
+  const text=editorToMarkdown(ed);
+  document.getElementById('composeCharCount').textContent=text.length;
+}
+
+function clearCompose(){
+  const ed=document.getElementById('composeEditor');
+  ed.innerHTML='';
+  ed._quoteData=null;
+  composeImgUrl='';composeVidUrl='';composeBtns=[];composeHtmlCode='';
+  const ta=document.getElementById('composeHtmlCode');if(ta)ta.value='';
+  const badge=document.getElementById('htmlPreviewBadge');if(badge)badge.style.display='none';
+  document.getElementById('composeImgUrl').value='';
+  document.getElementById('composeImgThumb').style.display='none';
+  document.getElementById('composeVidUrl').value='';
+  document.getElementById('composeBtnList').innerHTML='';
+  updateAttachPreview();onComposeChange();
+}
+
+function toggleCtbDropdown(id){
+  const el=document.getElementById(id);
+  const wasOpen=el.classList.contains('open');
+  closeAllCtbDropdowns();
+  if(!wasOpen)el.classList.add('open');
+}
+
+function closeAllCtbDropdowns(){
+  document.querySelectorAll('.ctb-dropdown').forEach(el=>el.classList.remove('open'));
+}
+
+function updateComposeImg(){
+  const url=document.getElementById('composeImgUrl').value.trim();
+  composeImgUrl=url;
+  const thumb=document.getElementById('composeImgThumb');
+  if(url){
+    document.getElementById('composeImgThumbImg').src=url;
+    thumb.style.display='block';
+  }
+  else{thumb.style.display='none';}
+  updateAttachPreview();
+}
+
+/* ══ LOGO STAMP ON IMAGE ══ */
+async function stampLogoOnImage(file){
+  return new Promise((resolve)=>{
+    const LOGO_URL='https://i.ibb.co/pBvLbsG3/ed89a1453931.png';
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const img=new Image();
+      img.onload=()=>{
+        const logo=new Image();
+        logo.crossOrigin='anonymous';
+        logo.onload=()=>{
+          const canvas=document.createElement('canvas');
+          canvas.width=img.width;canvas.height=img.height;
+          const ctx=canvas.getContext('2d');
+          ctx.drawImage(img,0,0);
+          // לוגו בפינה ימין למעלה — 12% מרוחב התמונה
+          const logoSize=Math.max(40,Math.round(img.width*0.12));
+          const pad=Math.round(img.width*0.018);
+          // הטמע לוגו ישירות ללא מסגרת
+          ctx.drawImage(logo,img.width-pad-logoSize,pad,logoSize,logoSize);
+          canvas.toBlob(blob=>{
+            const stamped=new File([blob],file.name||'image.jpg',{type:'image/jpeg'});
+            resolve(stamped);
+          },'image/jpeg',0.92);
+        };
+        logo.onerror=()=>resolve(file); // fallback ללא לוגו
+        logo.src=LOGO_URL;
+      };
+      img.onerror=()=>resolve(file);
+      img.src=ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadComposeImg(file){
+  if(!file)return;
+  const imgDropBtn=document.getElementById('imgDropBtn');
+  imgDropBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> מעלה...';
+  try{
+    // הטבע לוגו על התמונה לפני העלאה
+    file=await stampLogoOnImage(file);
+    const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
+    const form=new FormData();form.append('key',IMGBB_KEY);form.append('image',base64);
+    const resp=await fetch('https://api.imgbb.com/1/upload',{method:'POST',body:form});
+    const data=await resp.json();
+    if(data.success){
+      composeImgUrl=data.data.url;
+      document.getElementById('composeImgUrl').value=composeImgUrl;
+      document.getElementById('composeImgThumbImg').src=composeImgUrl;
+      document.getElementById('composeImgThumb').style.display='block';
+      updateAttachPreview();
+    }
+  }catch(e){}
+  imgDropBtn.innerHTML='<i class="fas fa-image"></i> תמונה';
+}
+
+function clearComposeImg(){composeImgUrl='';document.getElementById('composeImgUrl').value='';document.getElementById('composeImgThumb').style.display='none';updateAttachPreview();}
+
+function updateComposeVid(){
+  composeVidUrl=document.getElementById('composeVidUrl').value.trim();
+  updateAttachPreview();
+}
+
+function addComposeButton(){
+  const text=document.getElementById('composeBtnText').value.trim();
+  const url=document.getElementById('composeBtnUrl').value.trim();
+  if(!text||!url)return;
+  composeBtns.push({id:Date.now(),text,url});
+  document.getElementById('composeBtnText').value='';
+  document.getElementById('composeBtnUrl').value='';
+  renderComposeBtns();updateAttachPreview();
+}
+
+function removeComposeButton(id){
+  composeBtns=composeBtns.filter(b=>b.id!==id);
+  renderComposeBtns();updateAttachPreview();
+}
+
+function renderComposeBtns(){
+  document.getElementById('composeBtnList').innerHTML=composeBtns.map(b=>
+    `<div style="display:inline-flex;align-items:center;gap:4px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700;color:#ea580c;">
+      <i class="fas fa-mouse-pointer" style="font-size:9px"></i>${esc(b.text)}
+      <button onclick="removeComposeButton(${b.id})" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:11px;padding:0;line-height:1;">✕</button>
+    </div>`
+  ).join('');
+}
+
+function updateAttachPreview(){
+  const prev=document.getElementById('attachPreview');
+  const chips=[];
+  if(composeImgUrl)chips.push(`<div class="attach-chip"><i class="fas fa-image" style="color:#1a56db;font-size:10px"></i> תמונה <button onclick="clearComposeImg()">✕</button></div>`);
+  if(composeVidUrl)chips.push(`<div class="attach-chip"><i class="fas fa-video" style="color:#7c3aed;font-size:10px"></i> סרטון <button onclick="clearComposeVid()">✕</button></div>`);
+  if(composeHtmlCode)chips.push(`<div class="attach-chip"><i class="fas fa-code" style="color:#059669;font-size:10px"></i> HTML <button onclick="clearHtmlCode()">✕</button></div>`);
+  composeBtns.forEach(b=>chips.push(`<div class="attach-chip"><i class="fas fa-mouse-pointer" style="color:#ea580c;font-size:10px"></i> ${esc(b.text)} <button onclick="removeComposeButton(${b.id})">✕</button></div>`));
+  prev.innerHTML=chips.join('');
+  prev.classList.toggle('show',chips.length>0);
+}
+
+function clearComposeVid(){composeVidUrl='';document.getElementById('composeVidUrl').value='';updateAttachPreview();}
+
+/* ══ DRIVE VIDEO UPLOAD (super admin only) ══ */
+let _driveToken=null;
+let _driveFolderId=null;
+const DRIVE_FOLDER='סרטוני מבזק';
+const GOOGLE_OAUTH_CLIENT_ID='856723702772-jm929ihp29ovhribfaaph17pbaq6qr3n.apps.googleusercontent.com';
+
+function getDriveToken(){
+  return new Promise((resolve,reject)=>{
+    if(_driveToken){resolve(_driveToken);return;}
+    const cached=sessionStorage.getItem('feed_drive_token');
+    const cachedExp=parseInt(sessionStorage.getItem('feed_drive_token_exp')||'0');
+    if(cached&&Date.now()<cachedExp){_driveToken=cached;resolve(cached);return;}
+    // המתן לטעינת ה-GSI אם צריך
+    const doInit=()=>{
+      try{
+        const client=google.accounts.oauth2.initTokenClient({
+          client_id:GOOGLE_OAUTH_CLIENT_ID,
+          scope:'https://www.googleapis.com/auth/drive.file',
+          callback:(resp)=>{
+            if(resp.error){reject(new Error(resp.error));return;}
+            _driveToken=resp.access_token;
+            sessionStorage.setItem('feed_drive_token',resp.access_token);
+            sessionStorage.setItem('feed_drive_token_exp',String(Date.now()+55*60*1000));
+            resolve(_driveToken);
+          }
+        });
+        client.requestAccessToken();
+      }catch(err){reject(new Error('Google OAuth לא נטען: '+err.message));}
+    };
+    if(window.google?.accounts?.oauth2){doInit();}
+    else{
+      // poll עד שנטען (max 5 שניות)
+      let attempts=0;
+      const poll=setInterval(()=>{
+        attempts++;
+        if(window.google?.accounts?.oauth2){clearInterval(poll);doInit();}
+        else if(attempts>50){clearInterval(poll);reject(new Error('Google OAuth לא נטען'));}
+      },100);
+    }
+  });
+}
+
+async function getOrCreateDriveFolder(token){
+  if(_driveFolderId)return _driveFolderId;
+  const sr=await fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'${encodeURIComponent(DRIVE_FOLDER)}'+and+mimeType%3D'application%2Fvnd.google-apps.folder'+and+trashed%3Dfalse&fields=files(id)`,
+    {headers:{Authorization:'Bearer '+token}});
+  if(sr.ok){const d=await sr.json();if(d.files&&d.files.length){_driveFolderId=d.files[0].id;return _driveFolderId;}}
+  const fr=await fetch('https://www.googleapis.com/drive/v3/files?fields=id',{
+    method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
+    body:JSON.stringify({name:DRIVE_FOLDER,mimeType:'application/vnd.google-apps.folder'})});
+  if(!fr.ok)throw new Error('שגיאה ביצירת תיקייה');
+  const f=await fr.json();_driveFolderId=f.id;return _driveFolderId;
+}
+
+async function uploadVidToDrive(file){
+  if(!file||!isSuperAdmin())return;
+  const statusEl=document.getElementById('driveVidStatus');
+  const statusTxt=document.getElementById('driveVidStatusText');
+  const showStatus=(msg,isErr)=>{
+    statusEl.style.display='flex';
+    statusEl.style.background=isErr?'#fef2f2':'#f3e8ff';
+    statusEl.style.borderColor=isErr?'#fecaca':'#e9d5ff';
+    statusEl.style.color=isErr?'#dc2626':'#7c3aed';
+    statusEl.innerHTML=(isErr?'<i class="fas fa-exclamation-circle"></i>':'<i class="fas fa-spinner fa-spin"></i>')+' <span>'+msg+'</span>';
+  };
+  showStatus('מתחבר לGoogle Drive...');
+  let token;
+  try{token=await getDriveToken();}
+  catch(e){showStatus('שגיאת כניסה: '+e.message,true);return;}
+  showStatus('מאתר תיקייה...');
+  let folderId;
+  try{folderId=await getOrCreateDriveFolder(token);}
+  catch(e){showStatus('שגיאת תיקייה: '+e.message,true);return;}
+  showStatus('מעלה סרטון... ('+Math.round(file.size/1024/1024)+'MB)');
+  try{
+    const metadata={name:file.name||'video.mp4',mimeType:file.type,parents:[folderId]};
+    const form=new FormData();
+    form.append('metadata',new Blob([JSON.stringify(metadata)],{type:'application/json'}));
+    form.append('file',file);
+    const res=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+      {method:'POST',headers:{Authorization:'Bearer '+token},body:form});
+    if(!res.ok)throw new Error('שגיאת העלאה '+res.status);
+    const data=await res.json();
+    // הרשאות גישה נשארות כברירת מחדל (לא ציבורי)
+    // הגישה מוגבלת למי שיש לו גישה לתיקייה
+    const url='https://drive.google.com/file/d/'+data.id+'/view';
+    composeVidUrl=url;
+    document.getElementById('composeVidUrl').value=url;
+    updateAttachPreview();
+    statusEl.style.display='flex';
+    statusEl.style.background='#f0fdf4';
+    statusEl.style.borderColor='#bbf7d0';
+    statusEl.style.color='#16a34a';
+    statusEl.innerHTML='<i class="fas fa-check-circle"></i> <span>הועלה! הסרטון מוכן לשליחה</span>';
+    setTimeout(()=>{statusEl.style.display='none';closeAllCtbDropdowns();},2500);
+  }catch(e){showStatus('שגיאה: '+e.message,true);}
+}
+
+function editorToMarkdown(el){
+  function nodeToText(node){
+    if(node.nodeType===Node.TEXT_NODE)return node.textContent;
+    if(node.nodeType!==Node.ELEMENT_NODE)return'';
+    if(node.getAttribute&&node.getAttribute('data-quote-preview'))return'';
+    const tag=node.tagName.toLowerCase();
+    const inner=Array.from(node.childNodes).map(nodeToText).join('');
+    if(tag==='b'||tag==='strong')return'**'+inner+'**';
+    if(tag==='i'||tag==='em')return'_'+inner+'_';
+    if(tag==='u')return inner;
+    if(tag==='br')return'\n';
+    if(tag==='font'){
+      const color=node.getAttribute('color');
+      if(color)return`color:${color}${inner}/color`;
+      return inner;
+    }
+    if(tag==='span'){
+      const style=node.getAttribute('style')||'';
+      const colorMatch=style.match(/color:\s*([^;]+)/);
+      if(colorMatch)return`color:${colorMatch[1].trim()}${inner}/color`;
+      return inner;
+    }
+    if(tag==='s'){return`~~${inner}~~`;}
+    if(tag==='hr'){return '\n---DIVIDER---\n';}
+    if(tag==='a'){
+      const href=node.getAttribute('href')||'';
+      if(href&&href.startsWith('http'))return`[${inner}](${href})`;
+      return inner;
+    }
+    if(tag==='div'||tag==='p'){
+      return (node.previousElementSibling&&!node.previousElementSibling.getAttribute('data-quote-preview')?'\n':'')+inner;
+    }
+    return inner;
+  }
+  return nodeToText(el);
+}
+
+function insertDivider(){
+  const ed=document.getElementById('composeEditor');
+  ed.focus();
+  const hr=document.createElement('hr');
+  hr.className='bubble-divider';
+  const sel=window.getSelection();
+  if(sel&&sel.rangeCount){
+    const range=sel.getRangeAt(0);
+    range.collapse(false);
+    range.insertNode(hr);
+    // קפוץ אחרי ה-hr
+    const br=document.createElement('br');
+    hr.insertAdjacentElement('afterend',br);
+    range.setStartAfter(br);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  onComposeChange();
+}
+
+function composeStrikethrough(){
+  const ed=document.getElementById('composeEditor');
+  ed.focus();
+  const sel=window.getSelection();
+  if(!sel||!sel.rangeCount||sel.isCollapsed)return;
+  const range=sel.getRangeAt(0);
+  const s=document.createElement('s');
+  try{range.surroundContents(s);}
+  catch(e){document.execCommand('strikeThrough',false,null);}
+  onComposeChange();
+}
+
+let _savedLinkRange=null;
+function saveLinkSelection(){
+  const sel=window.getSelection();
+  if(sel&&sel.rangeCount){_savedLinkRange=sel.getRangeAt(0).cloneRange();}
+  const sel2=window.getSelection();
+  const txt=sel2&&!sel2.isCollapsed?sel2.toString():'';
+  if(txt)document.getElementById('composeLinkText').value=txt;
+}
+
+function insertComposeLink(){
+  const text=document.getElementById('composeLinkText').value.trim();
+  const url=document.getElementById('composeLinkUrl').value.trim();
+  if(!text||!url){alert('יש למלא טקסט וקישור');return;}
+  const ed=document.getElementById('composeEditor');
+  ed.focus();
+  if(_savedLinkRange){
+    const sel=window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(_savedLinkRange);
+  }
+  // הכנס אלמנט <a> אמיתי
+  const a=document.createElement('a');
+  a.href=url;a.target='_blank';a.rel='noopener noreferrer';
+  a.textContent=text;
+  a.style.color='#1a56db';
+  const sel=window.getSelection();
+  if(sel&&sel.rangeCount){
+    const range=sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(a);
+    range.setStartAfter(a);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  document.getElementById('composeLinkText').value='';
+  document.getElementById('composeLinkUrl').value='';
+  closeAllCtbDropdowns();
+  onComposeChange();
+}
+
+function applyTextColor(color){
+  const ed=document.getElementById('composeEditor');
+  ed.focus();
+  const sel=window.getSelection();
+  if(!sel||sel.rangeCount===0||sel.isCollapsed){
+    // אין בחירה — צייר צבע לטקסט הבא
+    document.execCommand('foreColor',false,color);
+  } else {
+    document.execCommand('foreColor',false,color);
+  }
+  closeAllCtbDropdowns();
+  onComposeChange();
+}
+
+function removeTextColor(){
+  const ed=document.getElementById('composeEditor');
+  ed.focus();
+  document.execCommand('foreColor',false,'#374151');
+  closeAllCtbDropdowns();
+  onComposeChange();
+}
+
+function onComposeKeyDown(e){
+  // Ctrl+Enter = שלח
+  if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){
+    e.preventDefault();
+    if(_editMsgId)saveEditMsg();
+    else sendFeedPost();
+    return;
+  }
+  // Enter רגיל = ירידת שורה (ברירת מחדל — אל תמנע)
+}
+
+async function sendFeedPost(){
+  if(!me||!isAdmin())return;
+  if(!isSuperAdmin()){
+    const granted=_writePerm?.emails||[];
+    if(!granted.includes(me.email)){alert('אין לך הרשאת כתיבה כרגע');return;}
+  }
+  const ed=document.getElementById('composeEditor');
+  const editorText=editorToMarkdown(ed).trim();
+  const quoteData=ed._quoteData||null;
+  const quotePrefix=quoteData
+    ? `\u200Bquote:${quoteData.id}\n${quoteData.text.split('\n').map(l=>'> '+l).join('\n')}\n\u200B\n\n`
+    : '';
+  const text=(quotePrefix+editorText).trim();
+  if(!text&&!composeImgUrl&&!composeHtmlCode){alert('הודעה ריקה');return;}
+  const now=new Date();
+  const entry={
+    profile:composeProfile,
+    text,
+    imgUrl:composeImgUrl,
+    videoUrl:composeVidUrl,
+    htmlCode:composeHtmlCode,
+    sender:me.name,
+    senderEmail:me.email,
+    time:now.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit',hour12:false}),
+    date:now.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'/'),
+    ts:now.getTime(),
+    groupCount:0,
+    buttons:composeBtns.map(b=>({text:b.text,url:b.url})),
+  };
+  const btn=document.getElementById('composeSendBtn');
+  btn.innerHTML='<i class="fas fa-spinner fa-spin" style="font-size:12px"></i>';btn.disabled=true;
+  try{
+    const r=await fetch(BACKEND+'/feed_add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});
+    const d=await r.json();
+    if(d.status==='ok'){
+      const newEntry=d.entry||entry;
+      if(!newEntry.id)newEntry.id=entry.id||String(entry.ts);
+      if(!knownIds.has(newEntry.id)){
+        knownIds.add(newEntry.id);
+        items.push(newEntry);
+        lastTs=Math.max(lastTs,newEntry.ts||0);
+        const inner=document.getElementById('feedInner');
+        document.getElementById('empty').style.display='none';
+        const div=document.createElement('div');
+        div.innerHTML=buildMsg(newEntry);
+        inner.appendChild(div.firstChild);
+      }
+      clearCompose();
+      document.getElementById('feedWrap').scrollTop=999999;
+    }else{alert('שגיאה בשליחה');}
+  }catch(e){alert('שגיאת שרת');}
+  btn.innerHTML='<i class="fas fa-paper-plane" style="font-size:14px"></i>';btn.disabled=false;
+}
+
+/* ══ ADMIN CHAT (in sidebar) ══ */
+const CHAT_COLORS=['#3b82f6','#7c3aed','#059669','#d97706','#dc2626','#db2777'];
+const chatCol=s=>CHAT_COLORS[(s||'').charCodeAt(0)%CHAT_COLORS.length];
+
+let _allowedMap={};
+async function loadAllowedMap(){
+  try{
+    const r=await fetch(BACKEND+'/allowed_list');
+    const d=await r.json();
+    _allowedMap={};
+    (d.emails||[]).forEach(e=>{
+      if(typeof e==='object'&&e.email){
+        _allowedMap[e.email.toLowerCase()]={name:e.name||e.email.split('@')[0],picture:e.picture||''};
+      }
+    });
+    _allowedMap[ADMIN_EMAIL.toLowerCase()]={name:'דוד',picture:me?.picture||''};
+  }catch(ex){}
+}
+
+function getDisplayName(email,fallback){
+  const entry=_allowedMap[(email||'').toLowerCase()];
+  if(entry?.name)return entry.name;
+  if(fallback&&!fallback.includes('@')&&!fallback.includes('×')&&fallback.length<30)return fallback;
+  if(email&&email.includes('@'))return email.split('@')[0];
+  return fallback||email||'?';
+}
+
+function toggleChatMinimize(){
+  const panel=document.getElementById('adminChatPanel');
+  panel.classList.toggle('minimized');
+  const isMin=panel.classList.contains('minimized');
+  const btn=document.getElementById('chatMinimizeBtn');
+  btn.innerHTML=isMin
+    ?'<i class="fas fa-expand-alt"></i>'
+    :'<i class="fas fa-minus"></i>';
+  // הצג פרסומת כשממוזער, הסתר כשפתוח
+  const adInChat=document.getElementById('adInChat');
+  if(adInChat&&_adInChatData){
+    adInChat.style.display=isMin?'flex':'none';
+  }
+}
+
+async function pingChatPresence(){
+  if(!me)return;
+  try{
+    const r=await fetch(BACKEND+'/presence_ping',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email,name:me.name,picture:me.picture})});
+    const d=await r.json();
+    document.getElementById('chatPresenceCount').textContent=(d.active||[]).length;
+  }catch(e){}
+}
+
+function renderChatText(t){
+  if(!t)return'';
+  let s=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  s=s.replace(/\*([^*\n]+)\*/g,'<strong>$1</strong>');
+  s=s.replace(/\_([^_\n]+)\_/g,'<em>$1</em>');
+  s=s.replace(/(https?:\/\/[^\s<>"']+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');
+  return s;
+}
+
+async function loadAdminChat(){
+  if(!isAdmin())return;
+  try{
+    const r=await fetch(BACKEND+'/chat_messages');
+    const d=await r.json();if(d.status!=='success')return;
+    const msgs=d.messages||[];
+    const sig=msgs.map(m=>m.id+(m.reactions?JSON.stringify(m.reactions):'')).join(',');
+    if(sig===chatLastIds)return;
+    const hadMsgs=chatLastIds!=='';
+    chatLastIds=sig;
+    renderAdminChat(msgs);
+    if(hadMsgs&&msgs.length){
+      const newest=msgs[msgs.length-1];
+      if(newest.email!==me?.email)
+        sendNotification("צ'אט מנהלים",getDisplayName(newest.email,newest.sender)+': '+(newest.text||'').substring(0,40));
+    }
+  }catch(e){}
+}
+
+function renderAdminChat(msgs){
+  const box=document.getElementById('chatMessages');
+  if(!box)return;
+  const empty=document.getElementById('chatEmptyMsg');
+  const atBot=box.scrollHeight-box.scrollTop-box.clientHeight<80;
+
+  if(!msgs.length){
+    box.innerHTML='';
+    if(empty){empty.style.display='block';box.appendChild(empty);}
+    return;
+  }
+  if(empty)empty.style.display='none';
+
+  box.innerHTML='';
+  let lastDate='',lastEmail='',lastMin='';
+
+  msgs.forEach((msg,idx)=>{
+    const isMe=msg.email===me?.email;
+    const displayName=getDisplayName(msg.email,msg.sender);
+    const picture=msg.picture||_allowedMap[(msg.email||'').toLowerCase()]?.picture||'';
+    const msgMin=(msg.clientTime||msg.time||'').substring(0,5);
+    const sameGroup=lastEmail===msg.email&&msgMin===lastMin;
+
+    const d=msg.date||msg.clientDate||'';
+    if(d&&d!==lastDate){
+      const sep=document.createElement('div');
+      sep.className='chat-date-sep';
+      sep.innerHTML=`<span>${d}</span>`;
+      box.appendChild(sep);
+      lastDate=d;
+    }
+
+    const grp=document.createElement('div');
+    grp.className='chat-grp'+(isMe?' me':'')+(!sameGroup&&idx>0?' gap':'');
+
+    const avEl=document.createElement('div');
+    avEl.className='chat-av';
+    avEl.style.background=chatCol(displayName);
+    avEl.style.visibility=sameGroup?'hidden':'visible';
+    if(picture){
+      const img=document.createElement('img');
+      img.src=picture;
+      img.onerror=()=>{img.style.display='none';avEl.textContent=displayName[0].toUpperCase();};
+      avEl.appendChild(img);
+    }else{avEl.textContent=displayName[0].toUpperCase();}
+
+    const bubs=document.createElement('div');
+    bubs.className='chat-bubs'+(isMe?' me':' other');
+
+    if(!isMe&&!sameGroup){
+      const nm=document.createElement('div');
+      nm.className='chat-sender';
+      nm.style.color=chatCol(displayName);
+      nm.textContent=displayName;
+      bubs.appendChild(nm);
+    }
+
+    const bub=document.createElement('div');
+    bub.className='chat-bub '+(isMe?'me':'other');
+    bub.dataset.id=msg.id;
+    bub.innerHTML=renderChatText(msg.text||'');
+    const t=msg.clientTime||msg.time||'';
+    if(t){
+      const ts=document.createElement('span');
+      ts.className='chat-time';
+      ts.textContent=' '+t;
+      bub.appendChild(ts);
+    }
+    bub.addEventListener('dblclick',ev=>{ev.preventDefault();showChatCtx(ev,msg,isMe);});
+    bubs.appendChild(bub);
+
+    if(isMe){grp.appendChild(bubs);grp.appendChild(avEl);}
+    else{grp.appendChild(avEl);grp.appendChild(bubs);}
+    box.appendChild(grp);
+
+    lastEmail=msg.email;lastMin=msgMin;
+  });
+
+  if(atBot)box.scrollTop=box.scrollHeight;
+}
+
+let _ctxMsgId=null;
+function showChatCtx(ev,msg,isMe){
+  ev.stopPropagation();
+  _ctxMsgId=msg.id;
+  const menu=document.getElementById('chatCtxMenu');
+  const canDel=isMe||isSuperAdmin();
+  menu.innerHTML=
+    `<div class="ctx-item" onclick="copyChatMsg('${escAttr(msg.id)}')"><i class="fas fa-copy"></i> העתק</div>`+
+    (canDel?`<div class="ctx-item danger" onclick="deleteChatMsg('${escAttr(msg.id)}')"><i class="fas fa-trash"></i> מחק</div>`:'');
+  menu.classList.add('show');
+  let x=ev.clientX,y=ev.clientY;
+  menu.style.left=x+'px';menu.style.top=y+'px';
+  requestAnimationFrame(()=>{
+    const r=menu.getBoundingClientRect();
+    if(r.right>window.innerWidth)menu.style.left=(x-r.width)+'px';
+    if(r.bottom>window.innerHeight)menu.style.top=(y-r.height)+'px';
+  });
+}
+function hideChatCtx(){document.getElementById('chatCtxMenu').classList.remove('show');}
+document.addEventListener('click',e=>{if(!e.target.closest('#chatCtxMenu'))hideChatCtx();});
+
+function copyChatMsg(id){
+  const bub=document.querySelector(`.chat-bub[data-id="${id}"]`);
+  if(!bub)return;
+  const text=bub.innerText.replace(/\s+\d{2}:\d{2}$/,'').trim();
+  navigator.clipboard.writeText(text).catch(()=>{});
+  hideChatCtx();
+}
+
+async function deleteChatMsg(id){
+  hideChatCtx();
+  if(!confirm('למחוק הודעה זו?'))return;
+  try{
+    await fetch(BACKEND+'/chat_delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email,id})});
+    chatLastIds='';loadAdminChat();
+  }catch(e){}
+}
+
+let _chatTypingTimer=null;
+function onChatType(){
+  if(!me)return;
+  fetch(BACKEND+'/typing_ping',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:getDisplayName(me.email,me.name),email:me.email})}).catch(()=>{});
+  clearTimeout(_chatTypingTimer);
+  _chatTypingTimer=setTimeout(()=>{
+    fetch(BACKEND+'/typing_stop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email})}).catch(()=>{});
+  },3000);
+}
+
+async function pollChatTyping(){
+  if(!isAdmin())return;
+  try{
+    const r=await fetch(BACKEND+'/typing_status');
+    const d=await r.json();
+    const others=(d.typers||[]).filter(n=>n!==me?.name);
+    const bar=document.getElementById('chatTypingBar');
+    if(others.length){bar.style.display='block';bar.textContent=others.map(n=>getDisplayName('',n)).join(', ')+' מקלידים...';}
+    else{bar.style.display='none';}
+  }catch(e){}
+}
+
+/* ── CHAT MENTION AUTOCOMPLETE ── */
+let _mentionQuery=null,_mentionIdx=0;
+
+function checkChatMention(ta){
+  const val=ta.value;
+  const pos=ta.selectionStart;
+  const before=val.substring(0,pos);
+  const atIdx=before.lastIndexOf('@');
+  if(atIdx===-1||(atIdx>0&&/\S/.test(before[atIdx-1]))){hideMentionDrop();return;}
+  const query=before.substring(atIdx+1).toLowerCase();
+  if(query.includes(' ')){hideMentionDrop();return;}
+  _mentionQuery={start:atIdx,query};
+  const candidates=getChatMentionCandidates(query);
+  if(!candidates.length){hideMentionDrop();return;}
+  showMentionDrop(candidates);
+}
+
+function getChatMentionCandidates(query){
+  // מהמנהלים הפעילים ב-_allowedMap
+  return Object.entries(_allowedMap)
+    .filter(([email,info])=>{
+      const name=(info.name||'').toLowerCase();
+      return name.includes(query)||email.includes(query);
+    })
+    .map(([email,info])=>({email,name:info.name||email.split('@')[0],picture:info.picture||''}))
+    .slice(0,6);
+}
+
+function showMentionDrop(candidates){
+  const box=document.getElementById('mentionDropdown');
+  if(!box)return;
+  _mentionIdx=0;
+  const COLORS=['#3b82f6','#7c3aed','#059669','#d97706','#dc2626','#db2777'];
+  const col=s=>COLORS[(s||'').charCodeAt(0)%COLORS.length];
+  box.innerHTML=candidates.map((u,i)=>{
+    const av=u.picture
+      ?`<div class="mention-av"><img src="${u.picture}" onerror="this.style.display='none'"></div>`
+      :`<div class="mention-av" style="background:${col(u.name)}">${(u.name[0]||'?').toUpperCase()}</div>`;
+    return `<div class="mention-item${i===0?' active':''}" onclick="insertChatMention('${u.name.replace(/'/,"\'")}')">
+      ${av}<span>${u.name}</span>
+    </div>`;
+  }).join('');
+  box.classList.add('show');
+}
+
+function hideMentionDrop(){
+  const box=document.getElementById('mentionDropdown');
+  if(box){box.classList.remove('show');box.innerHTML='';}
+  _mentionQuery=null;_mentionIdx=0;
+}
+
+function insertChatMention(name){
+  const ta=document.getElementById('chatInput');
+  if(!ta||!_mentionQuery)return;
+  const val=ta.value;
+  const before=val.substring(0,_mentionQuery.start);
+  const after=val.substring(_mentionQuery.start+1+_mentionQuery.query.length);
+  ta.value=before+'@'+name+' '+after;
+  ta.selectionStart=ta.selectionEnd=before.length+name.length+2;
+  hideMentionDrop();
+  ta.focus();
+}
+
+function handleChatInputKey(e){
+  const box=document.getElementById('mentionDropdown');
+  const items=box?box.querySelectorAll('.mention-item'):[];
+  if(box&&box.classList.contains('show')&&items.length){
+    if(e.key==='ArrowDown'){e.preventDefault();_mentionIdx=Math.min(_mentionIdx+1,items.length-1);items.forEach((el,i)=>el.classList.toggle('active',i===_mentionIdx));return;}
+    if(e.key==='ArrowUp'){e.preventDefault();_mentionIdx=Math.max(_mentionIdx-1,0);items.forEach((el,i)=>el.classList.toggle('active',i===_mentionIdx));return;}
+    if(e.key==='Enter'||e.key==='Tab'){
+      e.preventDefault();
+      const active=items[_mentionIdx];
+      if(active)active.click();
+      return;
+    }
+    if(e.key==='Escape'){hideMentionDrop();return;}
+  }
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMsg();}
+}
+
+async function sendChatMsg(){
+  const inp=document.getElementById('chatInput');
+  const text=inp.value.trim();if(!text||!me)return;
+  const now=new Date();
+  const clientTime=now.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const clientDate=now.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\//g,'/');
+  inp.value='';inp.style.height='auto';
+  clearTimeout(_chatTypingTimer);
+  fetch(BACKEND+'/typing_stop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email})}).catch(()=>{});
+  try{
+    await fetch(BACKEND+'/chat_send',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({sender:getDisplayName(me.email,me.name),text,picture:me.picture,email:me.email,clientTime,clientDate,clientTs:now.getTime()})});
+    chatLastIds='';loadAdminChat();
+  }catch(e){}
+}
+
+/* ══ ADMIN MESSAGES MODAL ══ */
+async function openManageAdmins(){
+  if(!isSuperAdmin())return;
+  document.getElementById('manageAdminsModal').style.display='flex';
+  await refreshAdminsList();
+}
+function closeManageAdmins(){document.getElementById('manageAdminsModal').style.display='none';}
+
+async function refreshAdminsList(){
+  try{
+    const r=await fetch(BACKEND+'/allowed_list');
+    const d=await r.json();
+    const list=document.getElementById('adminsList');
+    const entries=d.emails||[];
+    if(!entries.length){list.innerHTML='<div style="text-align:center;color:#aaa;font-size:13px;padding:20px;">אין מנהלים נוספים</div>';return;}
+    list.innerHTML=entries.map(e=>{
+      const email=typeof e==='string'?e:e.email;
+      const name=typeof e==='object'?(e.name||email):email;
+      const pic=typeof e==='object'?(e.picture||''):'';
+      const av=pic
+        ?`<img src="${escAttr(pic)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid #e5e7eb;" onerror="this.style.display='none'">`
+        :`<div style="width:32px;height:32px;border-radius:50%;background:#1a56db;color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;">${esc((name||'?')[0].toUpperCase())}</div>`;
+      return `<div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:9px 12px;">
+        ${av}
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(name)}</div>
+          <div style="font-size:11px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(email)}</div>
+        </div>
+        <button onclick="removeAdmin('${escAttr(email)}')" style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:4px 10px;font-size:11px;color:#dc2626;cursor:pointer;font-weight:700;font-family:'Heebo',sans-serif;flex-shrink:0;">הסר</button>
+      </div>`;
+    }).join('');
+  }catch(e){}
+}
+
+async function addAdmin(){
+  const email=document.getElementById('newAdminEmail').value.trim().toLowerCase();
+  const name=document.getElementById('newAdminName').value.trim();
+  if(!email||!email.includes('@')){showAdminMsgResult('אימייל לא תקין','red');return;}
+  if(!name){showAdminMsgResult('יש להזין שם','red');return;}
+  try{
+    const r=await fetch(BACKEND+'/allowed_add',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({admin_email:me.email,email,name,picture:''})});
+    const d=await r.json();
+    if(d.status==='success'){
+      document.getElementById('newAdminEmail').value='';
+      document.getElementById('newAdminName').value='';
+      showAdminMsgResult('נוסף ✓','green');
+      await refreshAdminsList();
+      await loadAllowedMap();
+    }else{showAdminMsgResult(d.msg||'שגיאה','red');}
+  }catch(e){showAdminMsgResult('שגיאת שרת','red');}
+}
+
+async function removeAdmin(email){
+  if(!confirm('להסיר את '+email+'?'))return;
+  try{
+    await fetch(BACKEND+'/allowed_remove',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({admin_email:me.email,email})});
+    await refreshAdminsList();
+    await loadAllowedMap();
+    showAdminMsgResult('הוסר ✓','green');
+  }catch(e){}
+}
+
+function showAdminMsgResult(txt,color){
+  const el=document.getElementById('adminMsgResult');
+  el.textContent=txt;el.style.color=color==='green'?'#16a34a':'#dc2626';
+  el.style.display='block';setTimeout(()=>el.style.display='none',2500);
+}
+
+function openAdminMsgs(){
+  if(!isAdmin())return;
+  document.getElementById('adminMsgsModal').classList.add('open');
+  if(adminMsgsLastId){
+    localStorage.setItem('admin_msgs_seen', adminMsgsLastId);
+    adminMsgsUnread=0;
+    updateAdminMsgsBadge();
+  }
+  loadAdminMsgs();
+}
+function closeAdminMsgs(){document.getElementById('adminMsgsModal').classList.remove('open');}
+
+async function loadAdminMsgs(){
+  try{
+    const r=await fetch(BACKEND+'/admin_list');
+    const d=await r.json();
+    const msgs=d.messages||[];
+    renderAdminMsgs(msgs);
+    checkAdminMsgsNew(msgs);
+  }catch(e){}
+}
+
+function checkAdminMsgsNew(msgs){
+  const lastSeen=localStorage.getItem('admin_msgs_seen')||'';
+  if(!msgs.length){
+    adminMsgsLastId='';
+    adminMsgsUnread=0;
+    updateAdminMsgsBadge();
+    return;
+  }
+  const topId=String(msgs[0].id);
+  if(adminMsgsLastId!==null && adminMsgsLastId!=='' && topId!==adminMsgsLastId){
+    const newest=msgs[0];
+    if(String(newest.email)!==String(me?.email)){
+      sendNotification('📢 הודעת מנהל חדשה', newest.sender+': '+(newest.text||'').substring(0,50));
+    }
+  }
+  const unread=msgs.filter(m=>String(m.id)>String(lastSeen) && String(m.email)!==String(me?.email)).length;
+  adminMsgsUnread=unread;
+  updateAdminMsgsBadge();
+  if(adminMsgsLastId===null) adminMsgsLastId=topId;
+  else adminMsgsLastId=topId;
+}
+
+function updateAdminMsgsBadge(){
+  const badge=document.getElementById('adminMsgsBadge');
+  if(!badge)return;
+  badge.classList.toggle('show', adminMsgsUnread>0);
+}
+
+function markAdminMsgsRead(){
+  if(!adminMsgsLastId)return;
+  localStorage.setItem('admin_msgs_seen', adminMsgsLastId);
+  adminMsgsUnread=0;
+  updateAdminMsgsBadge();
+  loadAdminMsgs();
+}
+
+const ADMIN_MSG_COLORS=['#3b82f6','#7c3aed','#059669','#d97706','#dc2626','#db2777'];
+const aMsgCol=s=>ADMIN_MSG_COLORS[(s||'').charCodeAt(0)%ADMIN_MSG_COLORS.length];
+
+function renderAdminMsgs(msgs){
+  const c=document.getElementById('adminMsgsBody');if(!c)return;
+  if(!msgs.length){c.innerHTML='<div style="text-align:center;padding:30px;color:#aaa;font-size:13px;">אין הודעות</div>';return;}
+  const lastSeen=localStorage.getItem('admin_msgs_seen')||'';
+  c.innerHTML=msgs.map(m=>{
+    const unread=String(m.id)>String(lastSeen)&&m.email!==me?.email;
+    const av=m.picture?`<img src="${escAttr(m.picture)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span>${(m.sender||'?')[0].toUpperCase()}</span>`;
+    return `<div class="admin-msg-item${unread?' unread':''}">
+      <div class="admin-msg-sender-row">
+        <div class="admin-msg-av" style="background:${aMsgCol(m.sender)}">${av}</div>
+        <span class="admin-msg-name">${esc(m.sender)}</span>
+        <span class="admin-msg-time">${esc(m.time||'')}</span>
+        ${unread?'<span style="background:#eff6ff;color:#1a56db;font-size:9px;font-weight:800;padding:1px 7px;border-radius:99px;border:1px solid #bfdbfe;">חדש</span>':''}
+        ${isSuperAdmin()?`<button onclick="deleteAdminMsg('${escAttr(String(m.id))}')" style="background:#fef2f2;border:1px solid #fecaca;border-radius:7px;padding:2px 8px;font-size:10px;color:#dc2626;cursor:pointer;font-family:'Heebo',sans-serif;font-weight:700;margin-right:auto"><i class="fas fa-trash"></i></button>`:''}
+      </div>
+      <div class="admin-msg-text">${esc(m.text)}</div>
+    </div>`;
+  }).join('');
+}
+
+async function sendAdminMsg(){
+  const inp=document.getElementById('adminMsgInput');
+  const text=inp.value.trim();if(!text||!me||!isSuperAdmin())return;
+  try{
+    await fetch(BACKEND+'/admin_send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,sender:me.name,picture:me.picture,email:me.email})});
+    inp.value='';inp.style.height='auto';
+    loadAdminMsgs();
+  }catch(e){alert('שגיאה בשליחה');}
+}
+
+async function deleteAdminMsg(id){
+  if(!confirm('למחוק?'))return;
+  try{
+    await fetch(BACKEND+'/admin_delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,email:me.email})});
+    loadAdminMsgs();
+  }catch(e){}
+}
+
+/* ── AD SYSTEM ── */
+const AD_KEY='shaagat_ad';const AD_INTERVAL=60*60*1000;
+
+async function loadAd(){
+  try{
+    const r=await fetch(BACKEND+'/ad_get');const d=await r.json();
+    if(d.side&&(d.side.imageUrl||d.side.htmlUrl||d.side.htmlCode)){showAdSide(d.side);}else{hideAdSide();}
+    if(d.popup&&(d.popup.imageUrl||d.popup.htmlUrl||d.popup.htmlCode)&&shouldShowAd()){showAdPopup(d.popup);}
+  }catch(e){}
+}
+
+function shouldShowAd(){const last=parseInt(localStorage.getItem(AD_KEY)||'0');return Date.now()-last>AD_INTERVAL;}
+function markAdShown(){localStorage.setItem(AD_KEY,String(Date.now()));}
+
+let _adInChatData=null;
+function showAdSide(ad){
+  const img=document.getElementById('adSidebarImg');
+  const link=document.getElementById('adSidebarLink');
+  const frame=document.getElementById('adSidebarFrame');
+  if(ad.htmlCode||ad.htmlUrl){
+    // דף HTML — הצג iframe, הסתר תמונה
+    if(img)img.style.display='none';
+    if(link)link.style.display='none';
+    if(frame){
+      if(ad.htmlCode){frame.srcdoc=ad.htmlCode;}
+      else if(ad.htmlUrl){frame.src=ad.htmlUrl;}
+      frame.style.display='block';
+    }
+  } else {
+    // תמונה רגילה
+    if(frame){frame.style.display='none';frame.src='';}
+    if(img){img.src=ad.imageUrl||'';img.style.display='block';}
+    if(link)link.href=ad.linkUrl||'#';
+  }
+
+
+  // למנהלים — הצג בתוך הchat sidebar (adInChat)
+  // לא-מנהלים — הצג adOnlySidebar נפרד
+  if(isAdmin()){
+    const adInChat=document.getElementById('adInChat');
+    const adFrame=document.getElementById('adInChatFrame');
+    const adImg=document.getElementById('adInChatImg');
+    const adLink=document.getElementById('adInChatLink');
+    if(adInChat){
+      if(ad.htmlCode||ad.htmlUrl){
+        if(adFrame){
+          if(ad.htmlCode)adFrame.srcdoc=ad.htmlCode;
+          else adFrame.src=ad.htmlUrl;
+          adFrame.style.display='block';
+        }
+        if(adLink)adLink.style.display='none';
+      } else {
+        if(adFrame)adFrame.style.display='none';
+        if(adImg){adImg.src=ad.imageUrl||'';adImg.style.display='block';}
+        if(adLink)adLink.style.display='block';
+        if(adLink)adLink.href=ad.linkUrl||'#';
+      }
+      // הצג רק כשממוזער — toggleChatMinimize ידאג לזה
+      _adInChatData=ad;
+    }
+  } else {
+    if(window.innerWidth>900){
+      document.getElementById('adOnlySidebar').style.display='block';
+    }
+  }
+}
+
+function hideAdSide(){
+  document.getElementById('adOnlySidebar').style.display='none';
+  const adInChat=document.getElementById('adInChat');
+  if(adInChat)adInChat.style.display='none';
+  _adInChatData=null;
+}
+
+function showAdPopup(ad){
+  const existing=document.getElementById('adOverlay');if(existing)return;
+  const overlay=document.createElement('div');overlay.id='adOverlay';
+  overlay.style.cssText='position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center';
+  const inner=document.createElement('div');
+  inner.style.cssText='position:relative;max-width:420px;width:90%;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)';
+  const closeBtn=`<button onclick="closeAd()" style="position:absolute;top:10px;right:10px;z-index:2;background:rgba(0,0,0,.5);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:Heebo,sans-serif">✕</button>`;
+  if(ad.htmlCode||ad.htmlUrl){
+    inner.innerHTML=closeBtn;
+    const frame=document.createElement('iframe');
+    if(ad.htmlCode){
+      frame.srcdoc=ad.htmlCode;
+    } else {
+      frame.src=ad.htmlUrl;
+    }
+    frame.style.cssText='width:100%;height:70vh;border:none;display:block;';
+    frame.setAttribute('sandbox','allow-scripts allow-popups allow-forms allow-top-navigation-by-user-activation');
+    inner.appendChild(frame);
+  } else {
+    inner.innerHTML=closeBtn+`<a href="${escAttr(ad.linkUrl||'#')}" target="_blank" rel="noopener noreferrer" onclick="closeAd()"><img src="${escAttr(ad.imageUrl)}" style="width:100%;display:block;max-height:70vh;object-fit:contain;background:#000"></a>`;
+  }
+  overlay.appendChild(inner);
+  document.body.appendChild(overlay);markAdShown();
+}
+function closeAd(){document.getElementById('adOverlay')?.remove();}
+
+async function openAdPanel(){
+  const modal=document.getElementById('adModal');modal.style.display='flex';
+  try{
+    const r=await fetch(BACKEND+'/ad_get');const d=await r.json();
+    if(d.popup){document.getElementById('adPopupImageUrl').value=d.popup.imageUrl||'';document.getElementById('adPopupLinkUrl').value=d.popup.linkUrl||'';if(document.getElementById('adPopupHtmlUrl'))document.getElementById('adPopupHtmlUrl').value=d.popup.htmlCode||'';}
+    if(d.side){document.getElementById('adSideImageUrl').value=d.side.imageUrl||'';document.getElementById('adSideLinkUrl').value=d.side.linkUrl||'';if(document.getElementById('adSideHtmlUrl'))document.getElementById('adSideHtmlUrl').value=d.side.htmlCode||'';}
+  }catch(e){}
+}
+function closeAdPanel(){document.getElementById('adModal').style.display='none';}
+
+async function saveAd(type){
+  const imgEl=type==='popup'?'adPopupImageUrl':'adSideImageUrl';
+  const lnkEl=type==='popup'?'adPopupLinkUrl':'adSideLinkUrl';
+  const htmlEl=type==='popup'?'adPopupHtmlUrl':'adSideHtmlUrl';
+  const imageUrl=document.getElementById(imgEl).value.trim();
+  const linkUrl=document.getElementById(lnkEl).value.trim();
+  const htmlCode=document.getElementById(htmlEl)?.value.trim()||'';
+  if(!imageUrl&&!htmlCode){showAdMsg('יש להזין תמונה או קוד HTML','red');return;}
+  try{
+    const r=await fetch(BACKEND+'/ad_set',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email,imageUrl,linkUrl,htmlCode,displayType:type})});
+    const d=await r.json();if(d.status==='ok'){showAdMsg('נשמר ✓','green');loadAd();}else showAdMsg(d.msg||'שגיאה','red');
+  }catch(e){showAdMsg('שגיאת שרת','red');}
+}
+
+async function deleteAd(type){
+  const imgEl=type==='popup'?'adPopupImageUrl':'adSideImageUrl';
+  const lnkEl=type==='popup'?'adPopupLinkUrl':'adSideLinkUrl';
+  try{
+    await fetch(BACKEND+'/ad_set',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:me.email,imageUrl:'',linkUrl:'',displayType:type})});
+    document.getElementById(imgEl).value='';document.getElementById(lnkEl).value='';
+    if(type==='side')hideAdSide();showAdMsg('הוסרה ✓','green');
+  }catch(e){}
+}
+
+function showAdMsg(txt,color){
+  const el=document.getElementById('adMsg');el.textContent=txt;el.style.color=color==='green'?'#16a34a':'#dc2626';el.style.display='block';
+  setTimeout(()=>el.style.display='none',2000);
+}
+
+/* ── DARK MODE ── */
+function toggleDark(){const on=document.body.classList.toggle('dark');document.getElementById('darkBtn').classList.toggle('active',on);localStorage.setItem('shaagat_dark',on?'1':'0');}
+function initDark(){if(localStorage.getItem('shaagat_dark')==='1'){document.body.classList.add('dark');document.getElementById('darkBtn')?.classList.add('active');}}
+
+/* ── NOTIFICATIONS ── */
+let notificationsOn=false;
+async function toggleNotifications(){
+  if(!('Notification'in window)){alert('הדפדפן שלך לא תומך בהתראות');return;}
+  if(notificationsOn){notificationsOn=false;document.getElementById('notifBtn').classList.remove('active');localStorage.setItem('shaagat_notif','0');return;}
+  const perm=await Notification.requestPermission();
+  if(perm==='granted'){notificationsOn=true;document.getElementById('notifBtn').classList.add('active');localStorage.setItem('shaagat_notif','1');new Notification('שאגת הארי',{body:'התראות מופעלות ✓',icon:LOGO});}
+}
+function initNotifications(){if(localStorage.getItem('shaagat_notif')==='1'&&Notification.permission==='granted'){notificationsOn=true;document.getElementById('notifBtn')?.classList.add('active');}}
+function sendNotification(title,body){
+  if(!notificationsOn||Notification.permission!=='granted')return;
+  if(document.visibilityState==='visible')return;
+  new Notification(title||'שאגת הארי',{body:body||'הודעה חדשה',icon:LOGO});
+}
+
+/* ── SEARCH ── */
+let searchTimer=null;
+function toggleSearch(){
+  const bar=document.getElementById('searchBar');const btn=document.getElementById('searchBtn');
+  const isOpen=bar.classList.contains('open');
+  if(isOpen){clearSearch();}else{bar.classList.add('open');btn.classList.add('active');setTimeout(()=>document.getElementById('searchInput').focus(),280);}
+}
+function onSearch(val){
+  const clear=document.getElementById('searchClear');clear.classList.toggle('show',val.length>0);
+  clearTimeout(searchTimer);
+  if(!val.trim()){document.getElementById('searchResults').style.display='none';document.getElementById('feedWrap').style.display='';return;}
+  searchTimer=setTimeout(()=>doSearch(val.trim()),250);
+}
+async function doSearch(q){
+  const qLow=q.toLowerCase();
+  document.getElementById('feedWrap').style.display='none';
+  document.getElementById('searchResults').style.display='block';
+  const inner=document.getElementById('searchResultsInner');
+  const empty=document.getElementById('searchEmpty');
+  inner.innerHTML='<div style="text-align:center;padding:30px;color:#aaa;font-size:13px;"><i class="fas fa-spinner fa-spin"></i> מחפש...</div>';
+  empty.style.display='none';
+  // טען את כל הפיד עמוד עמוד (מקסימום 30 דפים = 1500 פוסטים)
+  let allItems=[];let before=0;
+  for(let page=0;page<30;page++){
+    try{
+      const url=before?BACKEND+`/feed?before=${before}&limit=50`:BACKEND+'/feed?limit=50';
+      const r=await fetch(url);const d=await r.json();
+      if(d.status!=='ok'||!d.feed.length)break;
+      allItems.push(...d.feed);
+      if(d.feed.length<50)break;
+      before=Math.min(...d.feed.map(e=>e.ts||Infinity));
+    }catch(e){break;}
+  }
+  allItems.reverse();
+  const results=allItems.filter(e=>(e.text||'').toLowerCase().includes(qLow));
+  if(!results.length){inner.innerHTML='';empty.style.display='block';return;}
+  const escaped=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  inner.innerHTML=results.map(e=>
+    buildMsg(e).replace(new RegExp(`(${escaped})`,'gi'),'<mark style="background:#fff176;border-radius:3px;padding:0 1px">$1</mark>')
+  ).join('');
+  results.forEach(e=>{if(rxnCache[e.id])renderRxn(e.id,rxnCache[e.id]);});
+}
+function clearSearch(){
+  document.getElementById('searchInput').value='';document.getElementById('searchClear').classList.remove('show');
+  document.getElementById('searchResults').style.display='none';document.getElementById('searchResultsInner').innerHTML='';
+  document.getElementById('searchEmpty').style.display='none';document.getElementById('feedWrap').style.display='';
+  document.getElementById('searchBar').classList.remove('open');document.getElementById('searchBtn').classList.remove('active');
+}
+
+/* ── LIGHTBOX ── */
+function openLightbox(src){if(!src||!src.match(/^https?:\/\//))return;document.getElementById('lbImg').src=src;document.getElementById('lightbox').classList.add('show');document.body.style.overflow='hidden';}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('show');document.getElementById('lbImg').src='';document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLightbox();closeAdminMsgs();}});
+
+/* ══ EMOJI MANAGER ══ */
+// רשימת ברירת מחדל
+
+
+/* ══ EDIT MSG ══ */
+let _editMsgId=null;
+
+function openEditMsg(id){
+  if(!isAdmin())return;
+  const e=items.find(i=>i.id===id);
+  if(!e)return;
+  _editMsgId=id;
+  // מלא את תיבת הכתיבה בתוכן הנוכחי
+  const ed=document.getElementById('composeEditor');
+  ed.innerText=e.text||'';
+  composeImgUrl=e.imgUrl||'';
+  composeVidUrl=e.videoUrl||'';
+  composeHtmlCode=e.htmlCode||'';
+  composeBtns=(e.buttons||[]).map(b=>({text:b.text,url:b.url}));
+  // עדכן thumbs
+  if(composeImgUrl){
+    document.getElementById('composeImgUrl').value=composeImgUrl;
+    const th=document.getElementById('composeImgThumb');
+    if(th){document.getElementById('composeImgThumbImg').src=composeImgUrl;th.style.display='flex';}
+  }
+  if(composeVidUrl)document.getElementById('composeVidUrl').value=composeVidUrl;
+  updateAttachPreview();
+  // הצג כפתורי עריכה, הסתר שלח
+  document.getElementById('composeSendBtn').style.display='none';
+  document.getElementById('composeEditConfirmBtn').style.display='flex';
+  document.getElementById('composeEditCancelBtn').style.display='flex';
+  document.getElementById('composeEditBanner').classList.add('show');
+  // גלול לתיבת הכתיבה
+  document.getElementById('adminComposeBar').scrollIntoView({behavior:'smooth',block:'end'});
+  setTimeout(()=>{ed.focus();const r=document.createRange();r.selectNodeContents(ed);r.collapse(false);const s=window.getSelection();s.removeAllRanges();s.addRange(r);},200);
+}
+
+function cancelEditMode(){
+  _editMsgId=null;
+  clearCompose();
+  document.getElementById('composeSendBtn').style.display='flex';
+  document.getElementById('composeEditConfirmBtn').style.display='none';
+  document.getElementById('composeEditCancelBtn').style.display='none';
+  document.getElementById('composeEditBanner').classList.remove('show');
+}
+
+function closeEditMsg(){cancelEditMode();}
+
+async function saveEditMsg(){
+  if(!_editMsgId||!me)return;
+  const ed=document.getElementById('composeEditor');
+  const editorText=editorToMarkdown(ed).trim();
+  if(!editorText&&!composeImgUrl&&!composeHtmlCode){alert('ההודעה לא יכולה להיות ריקה');return;}
+  const btn=document.getElementById('composeEditConfirmBtn');
+  btn.innerHTML='<i class="fas fa-spinner fa-spin" style="font-size:12px"></i>';btn.disabled=true;
+  try{
+    const r=await fetch(BACKEND+'/feed_edit',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email:me.email,id:_editMsgId,
+        text:editorText,
+        imgUrl:composeImgUrl,
+        videoUrl:composeVidUrl,
+        htmlCode:composeHtmlCode,
+        buttons:composeBtns.map(b=>({text:b.text,url:b.url}))
+      })});
+    const d=await r.json();
+    if(d.status==='ok'){
+      cancelEditMode();
+      // עדכן מיידי בממשק
+      const entry=d.entry;
+      if(entry){
+        const idx=items.findIndex(i=>i.id===entry.id);
+        if(idx>=0)items[idx]=entry;
+        const row=document.querySelector(`.msg-row[data-id="${entry.id}"]`);
+        if(row){
+          const newDiv=document.createElement('div');
+          newDiv.innerHTML=buildMsg(entry);
+          row.replaceWith(newDiv.firstChild);
+        }
+      }
+    }else{alert(d.msg||'שגיאה בשמירה');}
+  }catch(e){alert('שגיאת רשת');}
+  finally{btn.innerHTML='<i class="fas fa-check" style="font-size:14px"></i>';btn.disabled=false;}
+}
+
+
+
+/* ══ INTERVALS ══ */
+async function pollOpenComments(){
+  if(!activeCmtMsgId)return;
+  try{
+    const r=await fetch(BACKEND+'/feed_comments?msgId='+encodeURIComponent(activeCmtMsgId));
+    const d=await r.json();const list=d.comments||[];
+    if(list.length===(cmtCount[activeCmtMsgId]||0))return;
+    cmtCount[activeCmtMsgId]=list.length;updateCmtBtn(activeCmtMsgId,list.length);
+    const b=document.getElementById('cpBody');const wasAtBottom=(b.scrollHeight-b.scrollTop-b.clientHeight)<60;
+    b.innerHTML=list.length?list.map(c=>buildCmt(activeCmtMsgId,c)).join(''):'<div class="no-cmt">עדיין אין תגובות</div>';
+    if(wasAtBottom)b.scrollTop=b.scrollHeight;
+  }catch(e){}
+}
+
+setInterval(pollAll,3000);
+setInterval(pollOpenComments,3000);
+setTimeout(pollAll,800);
+</script>
+</body>
+</html>
